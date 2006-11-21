@@ -1,0 +1,90 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1718
+
+This is a "chalkboard" green background Vim colorscheme featuring soft, yet highly readable contrasts. It is based on marklar.vim by SM Smithfield (vimscript #1483), which I like very much.
+The GUI colors have been optimized for easy, equal contrast on a TFT monitor.  Main goal was to minimize eye strain when working in a mixed environment where during long edit sessions you have to switch to high contrast white background screens every now and then.
+Additionally there have cterm colors been defined so they will look mostly identical on a 256 color (Linux) xterm. 
+
+View a color sample: http://img87.imageshack.us/img87/4386/tabulacolors.png
+(Tabula settings dialog is shown at bottom.)
+
+Starting with v. 0.2 the colorscheme is adjustable either on setup or on the fly. To permanently redefine the defaults put these settings in your .vimrc file before the
+        :colorscheme tabula
+line, e.g.:
+        :let Tabula_ColorPre = "red"
+
+To redefine them on the fly call the built-in options dialog:
+        :call Tabula()
+from the Vim command line.
+The new settings will be immediately effective as soon as control is back in the main dialog.
+To get the defaults back issue
+        :colorscheme tabula
+again.
+(This has changed from earlier tabula versions where this call was necessary to make the settings changes effective.)
+
+Display Statements In Bold:
+        Tabula_BoldStatement = 0    -- statements display not bold
+        Tabula_BoldStatement = 1    -- statements display bold
+Defaults to non-bold display.
+
+Set GUI Cursor Color:
+        Tabula_CurColor = 'blue'
+        Tabula_CurColor = 'red'
+        Tabula_CurColor = 'yellow'
+        Tabula_CurColor = 'white'
+Defaults to 'blue'.
+NOTE: This works in gvim only. In a terminal (like xterm) the cursor cannot be changed.
+
+Set Color For Preprocessor Statements:
+        Tabula_ColorPre = 'blue'     -- purple-blue
+        Tabula_ColorPre = 'red'	      -- orange-red
+        Tabula_ColorPre = 'yellow'  -- lightgreen-yellow
+Defaults to 'blue'.
+
+Use Dark Error Background:
+Sometimes desirable for less distracting error highlighting.
+        Tabula_DarkError = 0        -- light error background
+        Tabula_DarkError = 1        -- dark error background
+Defaults to light error background.
+
+Use multiple colors for constant values:
+        Tabula_FlatConstants = 1    -- use one common color for all constants
+        Tabula_FlatConstants = 0    -- use a different color for each constant type
+Defaults to using one common color.
+
+How To Display Ignore And NonText Characters:
+        Tabula_InvisibleIgnore = 0    -- slightly visible
+        Tabula_InvisibleIgnore = 1    -- invisible on standard background
+Defaults to invisible display.
+
+Show Line Numbers Underlined:
+Sometimes useful to spot a line more easily.
+        Tabula_LNumUnderline = 0    -- not underlined
+        Tabula_LNumUnderline = 1    -- line numbers are underlined
+Defaults to not underlined.
+
+Let Search Occurrences Stand Out More Prominently:
+        Tabula_SearchStandOut = 0    --- normal dark background display
+        Tabula_SearchStandOut = 1    --- prominent underlined display
+        Tabula_SearchStandOut = 2    --- very prominent display
+Defaults to normal display.
+
+How To Display TODOs And Similar:
+        Tabula_TodoUnderline = 0    -- display on a blue background
+        Tabula_TodoUnderline = 1    -- display them underlined white
+        Tabula_TodoUnderline = 2	   -- display them bold
+        Tabula_TodoUnderline = 3	   -- do not enhance them at all
+Defaults to underlined display.
+
+How to display typographic character values (bold, italic, underlined):
+      Tabula_CharValuesColored = 0	colored in addition to typographics
+      Tabula_CharValuesColored = 1	not colored, italics in terminal-based vim reversed
+      Tabula_CharValuesColored = 2	not colored, underlined in terminal-based vim reversed
+Defaults to a colored typographics character values display.
+NOTE: "Colored" is to be preferred in terminal-based vim because there is no easy way to distinguish italic from underline. In this mode italics and underlined characters are distinguished by different color shades, both displaying not reversed (usually black on a white background field) which is easier to read.
+Otherwise there are two non-colored modes:
+- italics are shown reversed, underlines are shown underlined
+or
+- italics are shown underlined, underlines are shown reversed.
+These sub-modes do not affect the GUI display, however, where italics and underlined always display as usual, only color coded or in the common text color.
+
+
