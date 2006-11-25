@@ -1,7 +1,7 @@
 " ----------------------------------------------------------------------------
 " Filename:	 tabula.vim
-" Last Modified: 2006-11-25
-" Version:       0.3
+" Last Modified: 2006-11-26
+" Version:       0.4
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -137,7 +137,8 @@ hi Constant		guifg=#D0D0D0	guibg=NONE		 	ctermfg=254
 if s:CurColor == "yellow"
   hi Cursor		guifg=#000000	guibg=#EFEF00
 elseif s:CurColor == "red"
-  hi Cursor		guifg=#FFFF00	guibg=#F70000
+  " Note: Input cursor will be invisible on Error Group
+  hi Cursor		guifg=#00007F	guibg=#F70000
 elseif s:CurColor == "blue"
   hi Cursor		guifg=#00007F	guibg=#00EFEF
 elseif s:CurColor == "white"
@@ -149,7 +150,14 @@ hi DiffDelete		guifg=NONE	guibg=#50694A 			ctermfg=1 	ctermbg=7	cterm=none
 hi DiffChange		guifg=fg	guibg=#00463c	gui=None	ctermfg=4 	ctermbg=2	cterm=none
 hi DiffText		guifg=#7CFC94	guibg=#00463c	gui=bold 	ctermfg=4 	ctermbg=3	cterm=none
 hi Directory		guifg=#25B9F8	guibg=NONE							ctermfg=2
-hi Error		guifg=#FFFFFF	guibg=#000000			ctermfg=7 	ctermbg=0	cterm=bold
+
+if s:CurColor == "red"
+  " Note: We need another background in this case to keep the cursor visible.
+  hi Error		guifg=#FF0000	guibg=#FFFF00	gui=bold	ctermfg=11 	ctermbg=9	cterm=NONE
+else
+  hi Error		guifg=#FFFF00	guibg=#FF0000	gui=NONE	ctermfg=11 	ctermbg=9	cterm=NONE
+endif
+
 hi ErrorMsg		guifg=#8eff2e	guibg=#204d40
 hi FoldColumn		guifg=#00BBBB	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
 hi Folded		guifg=#44DDDD	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
@@ -218,7 +226,8 @@ else
 endif
 
 hi Type			guifg=#FF80FF	guibg=bg	gui=none	ctermfg=212
-hi Underlined		guifg=#df820c	guibg=NONE	gui=underline	ctermfg=8			cterm=underline
+"hi Underlined		guifg=#df820c	guibg=NONE	gui=underline	ctermfg=8			cterm=underline
+hi Underlined						gui=underline					cterm=underline
 hi Visual 				guibg=#0B7260	gui=none
 hi WarningMsg		guifg=#FFFFFF	guibg=#FF0000			ctermfg=7	ctermbg=1	cterm=bold
 hi WildMenu		guifg=#20012e	guibg=#00a675	gui=bold	ctermfg=none	ctermbg=none	cterm=bold
@@ -234,52 +243,17 @@ hi tclBookends		guifg=#7CFC94	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 let html_my_rendering=1
 
 hi htmlBold		guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
-hi htmlBoldUnderline	guifg=#87FFD7			gui=bold,underline ctermfg=122			cterm=bold,underline
-hi htmlUnderline                			gui=underline					cterm=underline
-hi htmlItalic		guifg=#87D7D7			gui=NONE	ctermfg=116
-hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underline
 hi htmlBoldItalic	guifg=#87D7EF			gui=bold	ctermfg=117			cterm=bold
+hi htmlBoldUnderline	guifg=#87FFD7			gui=bold,underline ctermfg=122			cterm=bold,underline
 hi htmlBoldUnderlineItalic guifg=#87D7EF		gui=bold,underline ctermfg=117			cterm=bold,underline
-hi htmlLink		guifg=#8787D7			gui=underline   ctermfg=105			cterm=underline
 hi htmlH1		guifg=#00FF00	guibg=NONE	gui=bold,underline ctermfg=2			cterm=bold,underline
 hi htmlH2		guifg=#00FF00	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 hi htmlH3		guifg=#00FF00	guibg=NONE	gui=NONE	ctermfg=2
 hi htmlH4		guifg=#00C700	guibg=NONE	gui=underline	ctermfg=34			cterm=underline
 hi htmlH5		guifg=#00C700	guibg=NONE	gui=NONE	ctermfg=34
 hi htmlH6		guifg=#00A700	guibg=NONE	gui=underline	ctermfg=28			cterm=underline
-
-" ------------------------------------------------------------------------------------------------
-" Common groups that link to other highlight definitions.
-
-highlight link Constant     Character
-highlight link Constant     Number
-highlight link Constant     Boolean
-highlight link Constant     String
-
-highlight link LineNr       Operator
-
-highlight link Number       Float
-
-highlight link PreProc      Define
-highlight link PreProc      Include
-highlight link PreProc      Macro
-highlight link PreProc      PreCondit
-
-highlight link Question     Repeat
-
-highlight link Repeat       Conditional
-
-highlight link Special      Delimiter
-highlight link Special      SpecialChar
-highlight link Special      SpecialComment
-highlight link Special      Tag
-
-highlight link Statement    Exception
-highlight link Statement    Keyword
-highlight link Statement    Label
-
-highlight link Type         StorageClass
-highlight link Type         Structure
-highlight link Type         Typedef
-
+hi htmlItalic		guifg=#87D7D7			gui=NONE	ctermfg=116
+hi htmlLink		guifg=#8787D7			gui=underline   ctermfg=105			cterm=underline
+hi htmlUnderline                			gui=underline					cterm=underline
+hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underline
 
