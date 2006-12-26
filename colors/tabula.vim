@@ -1,7 +1,7 @@
 " ============================================================================
 " Filename:	 tabula.vim
-" Last Modified: 2006-12-03
-" Version:       1.0
+" Last Modified: 2006-12-26
+" Version:       1.1
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -13,6 +13,16 @@
 " 		 display on GUI and a 256 color xterm as well.
 " Install:       Put this file in the users colors directory (~/.vim/colors)
 "                then load it with :colorscheme tabula
+" =============================================================================
+" CHANGES:
+" - switched Boolean and Number constant colors for better consistence.
+"
+" TODO
+" - automize options setting
+" - keep options in some setup file, e.g.:
+"   tabula.rc, sub e.g. "<OPTIONS> ... </OPTIONS>" marks
+" - options set up per directory (autoload option)
+"   such that text files be displayed other than e.g. c sources
 " =============================================================================
 
 hi clear
@@ -74,6 +84,19 @@ if exists("g:Tabula_ColorPre")
   if g:Tabula_ColorPre == "red" || g:Tabula_ColorPre == "yellow"
     let s:ColorPre = g:Tabula_ColorPre
   endif
+endif
+
+"------------------------------------------------------------------------------
+" Use Dark Error Background:						   {{{2
+" Sometimes desirable for less distracting error highlighting.
+" 	Tabula_DarkError = 0		light red error background
+" 	Tabula_DarkError = 1		dark red error background
+" Defaults to light error background.
+"------------------------------------------------------------------------------
+"
+let s:DarkError = 0
+if exists("g:Tabula_DarkError")
+  let s:DarkError = g:Tabula_DarkError
 endif
 
 "------------------------------------------------------------------------------
@@ -157,10 +180,10 @@ hi Comment		guifg=#00BFD6					ctermfg=45
 if s:FlatConstants
   hi Constant		guifg=#7EDBD8					ctermfg=123
 else
-  hi Boolean		guifg=#00A7F7					ctermfg=39
+  hi Boolean		guifg=#7EDBD8					ctermfg=123
   hi Character		guifg=#AFD000					ctermfg=148
   hi Float		guifg=#AF87DF					ctermfg=141
-  hi Number		guifg=#7EDBD8					ctermfg=123
+  hi Number		guifg=#00A7F7					ctermfg=39
   hi String		guifg=#00DF00					ctermfg=46
 endif
 
@@ -190,11 +213,16 @@ hi Directory		guifg=#25B9F8	guibg=NONE							ctermfg=2
 " Error Colors:
 "------------------------------------------------------------------------------
 "
-if s:CurColor == "red"
-  " Note: We need another background in this case to keep the cursor visible.
-  hi Error		guifg=#FF0000	guibg=#FFFF00	gui=bold	ctermfg=11 	ctermbg=9	cterm=NONE
+if s:DarkError
+"  hi Error		guifg=#FF0000	guibg=#303800	gui=NONE	ctermfg=9 	ctermbg=236	cterm=NONE
+  hi Error		guifg=NONE	guibg=#303800	gui=NONE	ctermfg=NONE 	ctermbg=236	cterm=NONE
 else
-  hi Error		guifg=#FFFF00	guibg=#FF0000	gui=NONE	ctermfg=11 	ctermbg=9	cterm=NONE
+  if s:CurColor == "red"
+    " Note: We need another background in this case to keep the cursor visible.
+    hi Error		guifg=#FF0000	guibg=#FFFF00	gui=bold	ctermfg=11 	ctermbg=9	cterm=NONE
+  else
+    hi Error		guifg=#FFFF00	guibg=#FF0000	gui=NONE	ctermfg=11 	ctermbg=9	cterm=NONE
+  endif
 endif
 "------------------------------------------------------------------------------
 
@@ -218,7 +246,9 @@ else
 endif
 "------------------------------------------------------------------------------
 
-hi IncSearch				guibg=#52891f	gui=bold
+"hi IncSearch		guifg=#FFFFFF	guibg=#52891f	gui=NONE
+hi IncSearch		guifg=NONE	guibg=#206828	gui=NONE	ctermfg=NONE	ctermbg=22	cterm=NONE
+
 
 "------------------------------------------------------------------------------
 " Line Number Variants:
@@ -250,9 +280,9 @@ elseif s:ColorPre == "blue"
 endif
 "------------------------------------------------------------------------------
 
-hi Question		guifg=#FFFFFF	guibg=#00A261			ctermfg=15	ctermbg=35
-"hi Search		guifg=NONE	guibg=#0B7260			ctermfg=NONE	ctermbg=36
-hi Search		guifg=NONE	guibg=#2F3060			ctermfg=NONE	ctermbg=18
+"hi Question		guifg=#FFFFFF	guibg=#00A261	gui=none	ctermfg=15	ctermbg=35	cterm=none
+hi Question		guifg=#E5E500	guibg=NONE	gui=none	ctermfg=11	ctermbg=NONE	cterm=none
+hi Search		guifg=NONE	guibg=#202880			ctermfg=NONE	ctermbg=18
 hi SignColumn		guifg=#00BBBB	guibg=#204d40
 hi Special		guifg=#00F4F4	guibg=NONE	gui=none	ctermfg=51
 hi SpecialKey		guifg=#00F4F4	guibg=#266955
@@ -332,7 +362,7 @@ hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underli
 function! Tabula()
   call inputsave()
   let thisOption = 1
-  while thisOption >= 1 && thisOption <= 7
+  while thisOption >= 1 && thisOption <= 8
     redraw
     let thisOption = inputlist([
 	  \		     "Select a Tabula option:",
@@ -342,11 +372,12 @@ function! Tabula()
 	  \		     "4. Use multiple colors for constant values",
 	  \		     "5. Display of Ignore and NonText characters",
 	  \		     "6. Show line numbers underlined",
-	  \		     "7. Display of TODOs and similar"
+	  \		     "7. Display of TODOs and similar",
+	  \		     "8. Use dark error background"
 	  \		     ])
 
     redraw
-    if thisOption >= 1 && thisOption <= 7
+    if thisOption >= 1 && thisOption <= 8
       call Tabula_{thisOption}()
       "let g:Tabula_setOptions = 1
     endif
@@ -499,6 +530,27 @@ function! Tabula_7()
     let g:Tabula_TodoUnderline = 1
   elseif optionValue == 2
     let g:Tabula_TodoUnderline = 0
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Use Dark Error Background:						   {{{2
+"------------------------------------------------------------------------------
+"
+function! Tabula_8()
+  let curOption = "light "
+  if s:DarkError
+    let curOption = "dark "
+  endif
+  let optionValue = inputlist([
+	\		      "How to display errors in the text (currently ".curOption."background)?",
+	\		      "1. light background",
+	\		      "2. dark background"
+  	\		      ])
+  if optionValue == 1
+    let g:Tabula_DarkError = 0
+  elseif optionValue == 2
+    let g:Tabula_DarkError = 1
   endif
 endfunction
 

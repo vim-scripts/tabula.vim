@@ -1,7 +1,7 @@
-*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2006-12-03
+*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2006-12-26
 
 		  Option Settings for Tabula Vim Colorscheme~
-				 Version 1.0~
+				 Version 1.1~
 								
 		       Copyright (c) 2006 by Bernd Pol
 			    <bernd.pol@online.de>
@@ -29,6 +29,7 @@ again in order to activate the new settings.
 |Tabula_BoldStatement|		Display statements in bold format
 |Tabula_CurColor|		Set GUI cursor color
 |Tabula_ColorPre|		Set color for preprocessor statements
+|Tabula_DarkError|		Use dark background for error display
 |Tabula_FlatConstants|		Use multiple colors for constant values
 |Tabula_InvisibleIgnore|	Show ignore and non-text characters
 |Tabula_LNumUnderline|		Show line numbers underlined
@@ -61,6 +62,15 @@ SET COLOR FOR PREPROCESSOR STATEMENTS			    *Tabula_ColorPre*
 
 Defaults to 'blue'.
 
+-----------------------------------------------------------------------------
+USE DARK BACKGROUND FOR ERROR DISPLAY			   *Tabula_DarkError*
+
+Sometimes desirable for less distracting error highlighting.
+>
+	Tabula_DarkError = 0		light red error background
+	Tabula_DarkError = 1		dark red error background
+
+Defaults to light error background.
 -----------------------------------------------------------------------------
 USE MULTIPLE COLORS FOR CONSTANT VALUES		       *Tabula_FlatConstants*
 >
