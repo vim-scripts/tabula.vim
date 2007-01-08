@@ -1,7 +1,7 @@
 " ============================================================================
 " Filename:	 tabula.vim
-" Last Modified: 2006-12-26
-" Version:       1.1
+" Last Modified: 2007-01-09
+" Version:       1.2
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -14,9 +14,6 @@
 " Install:       Put this file in the users colors directory (~/.vim/colors)
 "                then load it with :colorscheme tabula
 " =============================================================================
-" CHANGES:
-" - switched Boolean and Number constant colors for better consistence.
-"
 " TODO
 " - automize options setting
 " - keep options in some setup file, e.g.:
@@ -138,6 +135,18 @@ if exists("g:Tabula_LNumUnderline")
 endif
 
 "------------------------------------------------------------------------------
+" Let Search Occurrences Stand Out More Prominently:			   {{{2
+"	Tabula_SearchStandOut = 0	normal dark background display
+"	Tabula_SearchStandOut = 1	prominent underlined display
+" Defaults to normal display.
+"------------------------------------------------------------------------------
+"
+let s:SearchStandOut=0
+if exists("g:Tabula_SearchStandOut")
+  let s:SearchStandOut = g:Tabula_SearchStandOut
+endif
+
+"------------------------------------------------------------------------------
 " How To Display TODOs And Similar:					   {{{2
 "	Tabula_TodoUnderline = 0	display on a blue background
 "	Tabula_TodoUnderline = 1	display them underlined white
@@ -171,14 +180,14 @@ if version >= 700
 endif
 "------------------------------------------------------------------------------
 
-hi Comment		guifg=#00BFD6					ctermfg=45	
+hi Comment		guifg=#00C5E7					ctermfg=45	
 
 "------------------------------------------------------------------------------
 " Constant Colors:
 "------------------------------------------------------------------------------
 "
 if s:FlatConstants
-  hi Constant		guifg=#7EDBD8					ctermfg=123
+  hi Constant		guifg=#7DDCDB					ctermfg=123
 else
   hi Boolean		guifg=#7EDBD8					ctermfg=123
   hi Character		guifg=#AFD000					ctermfg=148
@@ -229,7 +238,7 @@ endif
 hi ErrorMsg		guifg=#FFFFFF	guibg=#FF0000			ctermfg=7	ctermbg=1
 hi FoldColumn		guifg=#00BBBB	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
 hi Folded		guifg=#44DDDD	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
-hi Identifier		guifg=#FDAD5D					ctermfg=215			cterm=none
+hi Identifier		guifg=#FDAE5A					ctermfg=215			cterm=none
 
 "------------------------------------------------------------------------------
 " Ignore Variants:
@@ -265,7 +274,12 @@ endif
 
 hi ModeMsg		guifg=#FFFFFF	guibg=#0000FF	gui=NONE	ctermfg=7	ctermbg=4	cterm=NONE
 hi MoreMsg		guifg=#FFFFFF	guibg=#00A261	gui=NONE	ctermfg=7	ctermbg=28	cterm=NONE
-hi Normal		guifg=#71D289	guibg=#065349			ctermfg=85	ctermbg=23 
+
+"if &background == "dark"
+  hi Normal		guifg=#71D289	guibg=#065349			ctermfg=85	ctermbg=23 
+"else
+"  hi Normal		guibg=#71D289	guifg=#065349			ctermfg=85	ctermbg=23
+"endif
 
 "------------------------------------------------------------------------------
 " Preprocessor Variants:
@@ -276,15 +290,25 @@ if s:ColorPre == "red"
 elseif s:ColorPre == "yellow"
   hi PreProc		guifg=#AFFF00	guibg=bg			ctermfg=154
 elseif s:ColorPre == "blue"
-  hi PreProc		guifg=#8B89D9	guibg=bg			ctermfg=105
+  hi PreProc		guifg=#8E8CDD	guibg=bg			ctermfg=105
 endif
 "------------------------------------------------------------------------------
 
-"hi Question		guifg=#FFFFFF	guibg=#00A261	gui=none	ctermfg=15	ctermbg=35	cterm=none
 hi Question		guifg=#E5E500	guibg=NONE	gui=none	ctermfg=11	ctermbg=NONE	cterm=none
-hi Search		guifg=NONE	guibg=#202880			ctermfg=NONE	ctermbg=18
+
+"------------------------------------------------------------------------------
+" Search Stand Out Variants:
+"------------------------------------------------------------------------------
+"
+if s:SearchStandOut
+  hi Search		guifg=#FDAD5D	guibg=#202880	gui=underline	ctermfg=215	ctermbg=18	cterm=underline
+else
+  hi Search		guifg=NONE	guibg=#202880			ctermfg=NONE	ctermbg=18
+endif
+"------------------------------------------------------------------------------
+
 hi SignColumn		guifg=#00BBBB	guibg=#204d40
-hi Special		guifg=#00F4F4	guibg=NONE	gui=none	ctermfg=51
+hi Special		guifg=#00F2F3	guibg=NONE	gui=none	ctermfg=51
 hi SpecialKey		guifg=#00F4F4	guibg=#266955
 
 "------------------------------------------------------------------------------
@@ -294,7 +318,7 @@ hi SpecialKey		guifg=#00F4F4	guibg=#266955
 if s:BoldStatement
   hi Statement		guifg=#DEDE00			gui=bold	ctermfg=11			cterm=bold
 else
-  hi Statement		guifg=#E5E500			gui=none	ctermfg=11
+  hi Statement		guifg=#E4E300			gui=none	ctermfg=11
 endif
 "------------------------------------------------------------------------------
 
@@ -315,7 +339,7 @@ else
 endif
 "------------------------------------------------------------------------------
 
-hi Type			guifg=#F36FF1	guibg=bg	gui=none	ctermfg=212
+hi Type			guifg=#F26DDC	guibg=bg	gui=none	ctermfg=213
 hi Underlined						gui=underline					cterm=underline
 hi VertSplit		guifg=#245748	guibg=#689C7C	gui=none	ctermfg=72	ctermbg=23	cterm=reverse
 hi Visual 				guibg=#0B7260	gui=none
@@ -362,22 +386,23 @@ hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underli
 function! Tabula()
   call inputsave()
   let thisOption = 1
-  while thisOption >= 1 && thisOption <= 8
+  while thisOption >= 1 && thisOption <= 9
     redraw
     let thisOption = inputlist([
-	  \		     "Select a Tabula option:",
-	  \		     "1. Display statements in bold",
-	  \		     "2. Set GUI cursor color",
-	  \		     "3. Set Color for preprocessor statements",
-	  \		     "4. Use multiple colors for constant values",
-	  \		     "5. Display of Ignore and NonText characters",
-	  \		     "6. Show line numbers underlined",
-	  \		     "7. Display of TODOs and similar",
-	  \		     "8. Use dark error background"
+	  \		     "Select a 'Tabula_' option:",
+	  \		     "1. BoldStatement    Display statements in bold",
+	  \		     "2. ColorPre         Set Color for preprocessor statements",
+	  \		     "3. CurColor         Set GUI cursor color",
+	  \		     "4. DarkError        Use dark error background",
+	  \		     "5. FlatConstants    Use multiple colors for constant values",
+	  \		     "6. InvisibleIgnore  Display of Ignore and NonText characters",
+	  \		     "7. LNumUnderline    Show line numbers underlined",
+	  \		     "8. SearchStandOut   Display of search occurrences",
+	  \		     "9. TodoUnderline    Display of TODOs and similar"
 	  \		     ])
 
     redraw
-    if thisOption >= 1 && thisOption <= 8
+    if thisOption >= 1 && thisOption <= 9
       call Tabula_{thisOption}()
       "let g:Tabula_setOptions = 1
     endif
@@ -407,10 +432,30 @@ function! Tabula_1()
 endfunction
 
 "------------------------------------------------------------------------------
-" GUI Cursor Color:							   {{{2
+" Color For Preprocessor Statements:					   {{{2
 "------------------------------------------------------------------------------
 "
 function! Tabula_2()
+  let optionValue = inputlist([
+	\		      "How to display preprocessor statements (currently ".s:ColorPre.")?",
+	\		      "1. blue",
+	\		      "2. red",
+	\		      "3. yellow"
+  	\		      ])
+  if optionValue == 1
+    let g:Tabula_ColorPre = "blue"
+  elseif optionValue == 2
+    let g:Tabula_ColorPre = "red"
+  elseif optionValue == 3
+    let g:Tabula_ColorPre = "yellow"
+   endif
+endfunction
+
+"------------------------------------------------------------------------------
+" GUI Cursor Color:							   {{{2
+"------------------------------------------------------------------------------
+"
+function! Tabula_3()
   let optionValue = inputlist([
 	\		      "Use which cursor color (currently ".s:CurColor.")?",
 	\		      "1. blue",
@@ -430,30 +475,31 @@ function! Tabula_2()
 endfunction
 
 "------------------------------------------------------------------------------
-" Color For Preprocessor Statements:					   {{{2
+" Use Dark Error Background:						   {{{2
 "------------------------------------------------------------------------------
 "
-function! Tabula_3()
+function! Tabula_4()
+  let curOption = "light "
+  if s:DarkError
+    let curOption = "dark "
+  endif
   let optionValue = inputlist([
-	\		      "How to display preprocessor statements (currently ".s:ColorPre.")?",
-	\		      "1. blue",
-	\		      "2. red",
-	\		      "3. yellow"
+	\		      "How to display errors in the text (currently ".curOption."background)?",
+	\		      "1. light background",
+	\		      "2. dark background"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_ColorPre = "blue"
+    let g:Tabula_DarkError = 0
   elseif optionValue == 2
-    let g:Tabula_ColorPre = "red"
-  elseif optionValue == 3
-    let g:Tabula_ColorPre = "yellow"
-   endif
+    let g:Tabula_DarkError = 1
+  endif
 endfunction
 
 "------------------------------------------------------------------------------
 " Multiple Constant Colors:						   {{{2
 "------------------------------------------------------------------------------
 "
-function! Tabula_4()
+function! Tabula_5()
   let curOption = "one color"
   if s:FlatConstants == 0
     let curOption = "multiple colors"
@@ -474,7 +520,7 @@ endfunction
 " Ignore And NonText Characters:					   {{{2
 "------------------------------------------------------------------------------
 "
-function! Tabula_5()
+function! Tabula_6()
   let curOption = "invisible"
   if s:InvisibleIgnore == 0
     let curOption = "slightly visible"
@@ -495,7 +541,7 @@ endfunction
 " Underlined Line Numbers:						   {{{2
 "------------------------------------------------------------------------------
 "
-function! Tabula_6()
+function! Tabula_7()
   let curOption = ""
   if s:LNumUnderline == 0
     let curOption = "not "
@@ -513,10 +559,31 @@ function! Tabula_6()
 endfunction
 
 "------------------------------------------------------------------------------
+" Let Search Occurrences Stand Out More Prominently:			   {{{2
+"------------------------------------------------------------------------------
+"
+function! Tabula_8()
+  let curOption = "normal"
+  if s:SearchStandOut
+    let curOption = "prominent"
+  endif
+  let optionValue = inputlist([
+	\		      "How to display search occurrences (currently ".curOption.")?",
+	\		      "1. normal",
+	\		      "2. prominent"
+  	\		      ])
+  if optionValue == 1
+    let g:Tabula_SearchStandOut = 0
+  elseif optionValue == 2
+    let g:Tabula_SearchStandOut = 1
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
 " TODOs Display:							   {{{2
 "------------------------------------------------------------------------------
 "
-function! Tabula_7()
+function! Tabula_9()
   let curOption = ""
   if s:TodoUnderline == 0
     let curOption = "not "
@@ -530,27 +597,6 @@ function! Tabula_7()
     let g:Tabula_TodoUnderline = 1
   elseif optionValue == 2
     let g:Tabula_TodoUnderline = 0
-  endif
-endfunction
-
-"------------------------------------------------------------------------------
-" Use Dark Error Background:						   {{{2
-"------------------------------------------------------------------------------
-"
-function! Tabula_8()
-  let curOption = "light "
-  if s:DarkError
-    let curOption = "dark "
-  endif
-  let optionValue = inputlist([
-	\		      "How to display errors in the text (currently ".curOption."background)?",
-	\		      "1. light background",
-	\		      "2. dark background"
-  	\		      ])
-  if optionValue == 1
-    let g:Tabula_DarkError = 0
-  elseif optionValue == 2
-    let g:Tabula_DarkError = 1
   endif
 endfunction
 

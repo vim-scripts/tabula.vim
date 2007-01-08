@@ -1,7 +1,7 @@
-*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2006-12-26
+*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2007-01-01
 
 		  Option Settings for Tabula Vim Colorscheme~
-				 Version 1.1~
+				 Version 1.2~
 								
 		       Copyright (c) 2006 by Bernd Pol
 			    <bernd.pol@online.de>
@@ -33,6 +33,7 @@ again in order to activate the new settings.
 |Tabula_FlatConstants|		Use multiple colors for constant values
 |Tabula_InvisibleIgnore|	Show ignore and non-text characters
 |Tabula_LNumUnderline|		Show line numbers underlined
+|Tabula_SearchStandOut|		How to display search occurrences
 |Tabula_TodoUnderline|		How to display TODOs and similar
 
 -----------------------------------------------------------------------------
@@ -98,6 +99,12 @@ Sometimes useful to spot a line more easily.
 	Tabula_LNumUnderline = 1	line numbers are underlined
 
 Defaults to not underlined.
+
+-----------------------------------------------------------------------------
+HOW TO DISPLAY SEARCH OCCURRENCES		      *Tabula_SearchStandOut*
+>
+	Tabula_SearchStandOut = 0	normal dark background display
+	Tabula_SearchStandOut = 1	prominent underlined display
 
 -----------------------------------------------------------------------------
 HOW TO DISPLAY TODOS AND SIMILAR		       *Tabula_TodoUnderline*
