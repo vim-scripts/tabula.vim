@@ -1,7 +1,7 @@
 " ============================================================================
 " Filename:	 tabula.vim
-" Last Modified: 2007-01-09
-" Version:       1.2
+" Last Modified: 2007-02-01
+" Version:       1.3
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -138,6 +138,7 @@ endif
 " Let Search Occurrences Stand Out More Prominently:			   {{{2
 "	Tabula_SearchStandOut = 0	normal dark background display
 "	Tabula_SearchStandOut = 1	prominent underlined display
+"	Tabula_SearchStandOut = 2	even more prominent display
 " Defaults to normal display.
 "------------------------------------------------------------------------------
 "
@@ -255,10 +256,6 @@ else
 endif
 "------------------------------------------------------------------------------
 
-"hi IncSearch		guifg=#FFFFFF	guibg=#52891f	gui=NONE
-hi IncSearch		guifg=NONE	guibg=#206828	gui=NONE	ctermfg=NONE	ctermbg=22	cterm=NONE
-
-
 "------------------------------------------------------------------------------
 " Line Number Variants:
 " Lines can sometimes be more precisely identified if the line numbers are
@@ -300,10 +297,15 @@ hi Question		guifg=#E5E500	guibg=NONE	gui=none	ctermfg=11	ctermbg=NONE	cterm=non
 " Search Stand Out Variants:
 "------------------------------------------------------------------------------
 "
-if s:SearchStandOut
+if s:SearchStandOut == 0
+  hi IncSearch		guifg=#D0D0D0	guibg=#206828	gui=NONE	ctermfg=NONE	ctermbg=22	cterm=NONE
+  hi Search		guifg=NONE	guibg=#212a81			ctermfg=NONE	ctermbg=18
+elseif s:SearchStandOut == 1
+  hi IncSearch		guifg=#D0D0D0	guibg=#206828	gui=underline	ctermfg=252	ctermbg=22	cterm=underline
   hi Search		guifg=#FDAD5D	guibg=#202880	gui=underline	ctermfg=215	ctermbg=18	cterm=underline
-else
-  hi Search		guifg=NONE	guibg=#202880			ctermfg=NONE	ctermbg=18
+elseif s:SearchStandOut == 2
+  hi IncSearch		guibg=#D0D0D0	guifg=#206828	gui=underline	ctermbg=252	ctermfg=22	cterm=underline
+  hi Search		guibg=#FDAD5D	guifg=#202880	gui=underline	ctermbg=215	ctermfg=18	cterm=underline
 endif
 "------------------------------------------------------------------------------
 
@@ -339,7 +341,7 @@ else
 endif
 "------------------------------------------------------------------------------
 
-hi Type			guifg=#F26DDC	guibg=bg	gui=none	ctermfg=213
+hi Type			guifg=#F06BDB	guibg=bg	gui=none	ctermfg=213
 hi Underlined						gui=underline					cterm=underline
 hi VertSplit		guifg=#245748	guibg=#689C7C	gui=none	ctermfg=72	ctermbg=23	cterm=reverse
 hi Visual 				guibg=#0B7260	gui=none
@@ -563,19 +565,25 @@ endfunction
 "------------------------------------------------------------------------------
 "
 function! Tabula_8()
-  let curOption = "normal"
-  if s:SearchStandOut
+  if s:SearchStandOut == 0
+    let curOption = "normal"
+  elseif s:SearchStandOut == 1
     let curOption = "prominent"
+  elseif s:SearchStandOut == 2
+    let curOption = "very prominent"
   endif
   let optionValue = inputlist([
 	\		      "How to display search occurrences (currently ".curOption.")?",
 	\		      "1. normal",
-	\		      "2. prominent"
+	\		      "2. prominent",
+	\		      "3. very prominent"
   	\		      ])
   if optionValue == 1
     let g:Tabula_SearchStandOut = 0
   elseif optionValue == 2
     let g:Tabula_SearchStandOut = 1
+  elseif optionValue == 3
+    let g:Tabula_SearchStandOut = 2
   endif
 endfunction
 
