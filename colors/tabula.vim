@@ -1,7 +1,7 @@
 " ============================================================================
 " Filename:	 tabula.vim
-" Last Modified: 2007-02-01
-" Version:       1.3
+" Last Modified: 2007-02-08
+" Version:       1.3.1
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -13,6 +13,9 @@
 " 		 display on GUI and a 256 color xterm as well.
 " Install:       Put this file in the users colors directory (~/.vim/colors)
 "                then load it with :colorscheme tabula
+" =============================================================================
+" Latest Changes:
+" - Background GUI color slightly taken back for better contrast
 " =============================================================================
 " TODO
 " - automize options setting
@@ -181,7 +184,8 @@ if version >= 700
 endif
 "------------------------------------------------------------------------------
 
-hi Comment		guifg=#00C5E7					ctermfg=45	
+"hi Comment		guifg=#00C5E7					ctermfg=39	
+hi Comment		guifg=#00C5E7					ctermfg=51
 
 "------------------------------------------------------------------------------
 " Constant Colors:
@@ -213,10 +217,10 @@ elseif s:CurColor == "white"
 endif
 "------------------------------------------------------------------------------
 
-hi DiffAdd		guifg=NONE	guibg=#136769 			ctermfg=4	ctermbg=7	cterm=none
-hi DiffDelete		guifg=NONE	guibg=#50694A 			ctermfg=1 	ctermbg=7	cterm=none
-hi DiffChange		guifg=fg	guibg=#00463c	gui=None	ctermfg=4 	ctermbg=2	cterm=none
-hi DiffText		guifg=#7CFC94	guibg=#00463c	gui=bold 	ctermfg=4 	ctermbg=3	cterm=none
+hi DiffAdd		guifg=NONE	guibg=#136769 			ctermfg=4	ctermbg=7	cterm=NONE
+hi DiffDelete		guifg=NONE	guibg=#50694A 			ctermfg=1 	ctermbg=7	cterm=NONE
+hi DiffChange		guifg=fg	guibg=#00463c	gui=None	ctermfg=4 	ctermbg=2	cterm=NONE
+hi DiffText		guifg=#7CFC94	guibg=#00463c	gui=bold 	ctermfg=4 	ctermbg=3	cterm=NONE
 hi Directory		guifg=#25B9F8	guibg=NONE							ctermfg=2
 
 "------------------------------------------------------------------------------
@@ -239,7 +243,7 @@ endif
 hi ErrorMsg		guifg=#FFFFFF	guibg=#FF0000			ctermfg=7	ctermbg=1
 hi FoldColumn		guifg=#00BBBB	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
 hi Folded		guifg=#44DDDD	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
-hi Identifier		guifg=#FDAE5A					ctermfg=215			cterm=none
+hi Identifier		guifg=#FDAE5A					ctermfg=215			cterm=NONE
 
 "------------------------------------------------------------------------------
 " Ignore Variants:
@@ -272,11 +276,7 @@ endif
 hi ModeMsg		guifg=#FFFFFF	guibg=#0000FF	gui=NONE	ctermfg=7	ctermbg=4	cterm=NONE
 hi MoreMsg		guifg=#FFFFFF	guibg=#00A261	gui=NONE	ctermfg=7	ctermbg=28	cterm=NONE
 
-"if &background == "dark"
-  hi Normal		guifg=#71D289	guibg=#065349			ctermfg=85	ctermbg=23 
-"else
-"  hi Normal		guibg=#71D289	guifg=#065349			ctermfg=85	ctermbg=23
-"endif
+hi Normal		guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
 
 "------------------------------------------------------------------------------
 " Preprocessor Variants:
@@ -287,11 +287,11 @@ if s:ColorPre == "red"
 elseif s:ColorPre == "yellow"
   hi PreProc		guifg=#AFFF00	guibg=bg			ctermfg=154
 elseif s:ColorPre == "blue"
-  hi PreProc		guifg=#8E8CDD	guibg=bg			ctermfg=105
+  hi PreProc		guifg=#918EE4	guibg=bg			ctermfg=105
 endif
 "------------------------------------------------------------------------------
 
-hi Question		guifg=#E5E500	guibg=NONE	gui=none	ctermfg=11	ctermbg=NONE	cterm=none
+hi Question		guifg=#E5E500	guibg=NONE	gui=NONE	ctermfg=11	ctermbg=NONE	cterm=NONE
 
 "------------------------------------------------------------------------------
 " Search Stand Out Variants:
@@ -310,7 +310,7 @@ endif
 "------------------------------------------------------------------------------
 
 hi SignColumn		guifg=#00BBBB	guibg=#204d40
-hi Special		guifg=#00F2F3	guibg=NONE	gui=none	ctermfg=51
+hi Special		guifg=#00E0F2	guibg=NONE	gui=NONE	ctermfg=45
 hi SpecialKey		guifg=#00F4F4	guibg=#266955
 
 "------------------------------------------------------------------------------
@@ -320,12 +320,12 @@ hi SpecialKey		guifg=#00F4F4	guibg=#266955
 if s:BoldStatement
   hi Statement		guifg=#DEDE00			gui=bold	ctermfg=11			cterm=bold
 else
-  hi Statement		guifg=#E4E300			gui=none	ctermfg=11
+  hi Statement		guifg=#E4E300			gui=NONE	ctermfg=11
 endif
 "------------------------------------------------------------------------------
 
-hi StatusLine		guifg=#000000	guibg=#7DCEAD	gui=none			ctermbg=00	cterm=reverse
-hi StatusLineNC		guifg=#245748	guibg=#689C7C	gui=none	ctermfg=72	ctermbg=23	cterm=reverse
+hi StatusLine		guifg=#000000	guibg=#7DCEAD	gui=NONE			ctermbg=00	cterm=reverse
+hi StatusLineNC		guifg=#245748	guibg=#689C7C	gui=NONE	ctermfg=72	ctermbg=23	cterm=reverse
 hi Title		guifg=#7CFC94	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 
 "------------------------------------------------------------------------------
@@ -341,14 +341,14 @@ else
 endif
 "------------------------------------------------------------------------------
 
-hi Type			guifg=#F06BDB	guibg=bg	gui=none	ctermfg=213
+hi Type			guifg=#F269E4	guibg=bg	gui=NONE	ctermfg=213
 hi Underlined						gui=underline					cterm=underline
-hi VertSplit		guifg=#245748	guibg=#689C7C	gui=none	ctermfg=72	ctermbg=23	cterm=reverse
-hi Visual 				guibg=#0B7260	gui=none
+hi VertSplit		guifg=#245748	guibg=#689C7C	gui=NONE	ctermfg=72	ctermbg=23	cterm=reverse
+hi Visual 				guibg=#0B7260	gui=NONE
 hi WarningMsg		guifg=#000087	guibg=#FFFF00			ctermfg=18	ctermbg=11
-hi WildMenu		guifg=#20012e	guibg=#00a675	gui=bold	ctermfg=none	ctermbg=none	cterm=bold
+hi WildMenu		guifg=#20012e	guibg=#00a675	gui=bold	ctermfg=NONE	ctermbg=NONE	cterm=bold
 "
-hi pythonPreCondit							ctermfg=2			cterm=none
+hi pythonPreCondit							ctermfg=2			cterm=NONE
 hi tkWidget		guifg=#D5B11C	guibg=bg	gui=bold	ctermfg=7			cterm=bold
 hi tclBookends		guifg=#7CFC94	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 
@@ -375,7 +375,86 @@ hi htmlUnderline                			gui=underline					cterm=underline
 hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underline
 
 "------------------------------------------------------------------------------
-" Links To Other Highlight Groups:
+" VimOutliner Groups:
+" (see http://www.vimoutliner.org)
+" Note: Make sure to add "colorscheme tabula" to the .vimoutlinerrc file.
+"------------------------------------------------------------------------------
+"
+" Indent level colors
+
+hi OL1			guifg=#02CAE9	guibg=NONE	gui=underline	ctermfg=51			cterm=underline
+hi OL2			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL3			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL4			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL5			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL6			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL7			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL8			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL9			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+
+" colors for tags
+hi outlTags		guifg=#F269E4	guibg=NONE	gui=NONE	ctermfg=213
+
+" color for body text
+hi BT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+
+" color for pre-formatted text
+hi PT1			guifg=#7DDCDB					ctermfg=123
+hi PT2			guifg=#7DDCDB					ctermfg=123
+hi PT3			guifg=#7DDCDB					ctermfg=123
+hi PT4			guifg=#7DDCDB					ctermfg=123
+hi PT5			guifg=#7DDCDB					ctermfg=123
+hi PT6			guifg=#7DDCDB					ctermfg=123
+hi PT7			guifg=#7DDCDB					ctermfg=123
+hi PT8			guifg=#7DDCDB					ctermfg=123
+hi PT9			guifg=#7DDCDB					ctermfg=123
+
+" color for tables 
+hi TA1			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA2			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA3			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA4			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA5			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA6			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA7			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA8			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA9			guifg=#918EE4	guibg=bg			ctermfg=105
+
+" color for user text (wrapping)
+hi UT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+
+" color for user text (non-wrapping)
+hi UT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi UT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+
+" colors for experimental spelling error highlighting
+" this only works for spellfix.vim with will be cease to exist soon
+hi spellErr		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
+hi BadWord		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
+
 
 "==============================================================================
 "			       Options Processor			   {{{1
