@@ -1,7 +1,7 @@
 " ============================================================================
 " Filename:	 tabula.vim
 " Last Modified: 2007-02-08
-" Version:       1.3.1
+" Version:       1.3.2
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
 " Copyright:	 2006 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
@@ -15,7 +15,6 @@
 "                then load it with :colorscheme tabula
 " =============================================================================
 " Latest Changes:
-" - Background GUI color slightly taken back for better contrast
 " =============================================================================
 " TODO
 " - automize options setting
@@ -382,29 +381,29 @@ hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underli
 "
 " Indent level colors
 
-hi OL1			guifg=#02CAE9	guibg=NONE	gui=underline	ctermfg=51			cterm=underline
-hi OL2			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL3			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL4			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL5			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL6			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL7			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL8			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
-hi OL9			guifg=#02CAE9	guibg=NONE	gui=NONE	ctermfg=51
+hi OL1			guifg=#02AAFF					ctermfg=33
+hi OL2			guifg=#02CAE9					ctermfg=39
+hi OL3			guifg=#87D7D7					ctermfg=44
+hi OL4			guifg=#87D7D7					ctermfg=44
+hi OL5			guifg=#87D7D7					ctermfg=44
+hi OL6			guifg=#87D7D7					ctermfg=44
+hi OL7			guifg=#87D7D7					ctermfg=44
+hi OL8			guifg=#87D7D7					ctermfg=44
+hi OL9			guifg=#87D7D7					ctermfg=44
 
 " colors for tags
-hi outlTags		guifg=#F269E4	guibg=NONE	gui=NONE	ctermfg=213
-
+hi outlTags		guifg=#F269E4					ctermfg=213
+	
 " color for body text
-hi BT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi BT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
+hi BT1			guifg=#71D289					ctermfg=84 
+hi BT2			guifg=#71D289					ctermfg=84 
+hi BT3			guifg=#71D289					ctermfg=84 
+hi BT4			guifg=#71D289					ctermfg=84 
+hi BT5			guifg=#71D289					ctermfg=84 
+hi BT6			guifg=#71D289					ctermfg=84 
+hi BT7			guifg=#71D289					ctermfg=84 
+hi BT8			guifg=#71D289					ctermfg=84 
+hi BT9			guifg=#71D289					ctermfg=84 
 
 " color for pre-formatted text
 hi PT1			guifg=#7DDCDB					ctermfg=123
@@ -418,38 +417,38 @@ hi PT8			guifg=#7DDCDB					ctermfg=123
 hi PT9			guifg=#7DDCDB					ctermfg=123
 
 " color for tables 
-hi TA1			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA2			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA3			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA4			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA5			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA6			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA7			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA8			guifg=#918EE4	guibg=bg			ctermfg=105
-hi TA9			guifg=#918EE4	guibg=bg			ctermfg=105
+hi TA1			guifg=#918EE4	   				ctermfg=105
+hi TA2			guifg=#918EE4	   				ctermfg=105
+hi TA3			guifg=#918EE4	   				ctermfg=105
+hi TA4			guifg=#918EE4	   				ctermfg=105
+hi TA5			guifg=#918EE4	   				ctermfg=105
+hi TA6			guifg=#918EE4	   				ctermfg=105
+hi TA7			guifg=#918EE4	   				ctermfg=105
+hi TA8			guifg=#918EE4	   				ctermfg=105
+hi TA9			guifg=#918EE4	   				ctermfg=105
 
 " color for user text (wrapping)
-hi UT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-
+hi UT1			guifg=#71D289					ctermfg=84
+hi UT2			guifg=#71D289					ctermfg=84 
+hi UT3			guifg=#71D289					ctermfg=84 
+hi UT4			guifg=#71D289					ctermfg=84 
+hi UT5			guifg=#71D289					ctermfg=84 
+hi UT6			guifg=#71D289					ctermfg=84 
+hi UT7			guifg=#71D289					ctermfg=84 
+hi UT8			guifg=#71D289					ctermfg=84 
+hi UT9			guifg=#71D289					ctermfg=84 
+	
 " color for user text (non-wrapping)
-hi UT1			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT2			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT3			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT4			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT5			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT6			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT7			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT8			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-hi UT9			guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23 
-
+hi UT1			guifg=#71D289					ctermfg=84 
+hi UT2			guifg=#71D289					ctermfg=84 
+hi UT3			guifg=#71D289					ctermfg=84 
+hi UT4			guifg=#71D289					ctermfg=84 
+hi UT5			guifg=#71D289					ctermfg=84 
+hi UT6			guifg=#71D289					ctermfg=84 
+hi UT7			guifg=#71D289					ctermfg=84 
+hi UT8			guifg=#71D289					ctermfg=84 
+hi UT9			guifg=#71D289					ctermfg=84
+	
 " colors for experimental spelling error highlighting
 " this only works for spellfix.vim with will be cease to exist soon
 hi spellErr		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
