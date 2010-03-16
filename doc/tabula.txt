@@ -1,9 +1,9 @@
-*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2007-02-01
+*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2010-03-16
 
-		  Option Settings for Tabula Vim Colorscheme~
-				 Version 1.3~
+	       Option Settings for the Tabula Vim Colorscheme~
+				 Version 1.4~
 								
-		       Copyright (c) 2006 by Bernd Pol
+		    Copyright (c) 2006..2010 by Bernd Pol
 			    <bernd.pol@online.de>
 
 This material may be distributed only subject to the terms and conditions set
@@ -13,9 +13,9 @@ presently available at http://www.opencontent.org/openpub/).
 -----------------------------------------------------------------------------
 CONTENTS					   *tabula* *tabula-contents* 
 
-Tabula is a so-called green chalkboard Vim colorscheme for harmonic, yet
-easily distinguishable display on GUI and a 256 color xterms.  It is based on
-the marklar.vim colorscheme by SM Smithfield.
+Tabula is a so-called green chalkboard Vim colorscheme for soft contrast, yet
+easily readable display on GUI and a 256 color xterms.  It is based on the
+marklar.vim colorscheme by SM Smithfield (vimscript #1483).
 
 |tabula-use|		How to use tabula
 |tabula-xterm|		How to force the full xterm color range
@@ -32,9 +32,12 @@ line, e.g.: >
 
 To redefine them on the fly call the built-in options dialog: >
 	:call Tabula()
-from the command line and then command >
+
+NOTE: The new settings will be in effect as soon as you leave the options
+dialog. There is no need to call
 	:colorscheme tabula
-again in order to activate the new settings.
+again (as in older versions) in order to activate the new settings.
+But you may do so anytime.
 
 -----------------------------------------------------------------------------
 HOW TO FORCE THE FULL XTERM COLOR RANGE			       *tabula-xterm*
