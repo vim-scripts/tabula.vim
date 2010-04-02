@@ -1,7 +1,7 @@
-*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2010-03-16
+*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2010-04-02
 
 	       Option Settings for the Tabula Vim Colorscheme~
-				 Version 1.4~
+				 Version 1.4.1~
 								
 		    Copyright (c) 2006..2010 by Bernd Pol
 			    <bernd.pol@online.de>
@@ -32,12 +32,9 @@ line, e.g.: >
 
 To redefine them on the fly call the built-in options dialog: >
 	:call Tabula()
-
-NOTE: The new settings will be in effect as soon as you leave the options
-dialog. There is no need to call
+then call
 	:colorscheme tabula
-again (as in older versions) in order to activate the new settings.
-But you may do so anytime.
+in order to activate the new settings.
 
 -----------------------------------------------------------------------------
 HOW TO FORCE THE FULL XTERM COLOR RANGE			       *tabula-xterm*
@@ -63,6 +60,8 @@ AVAILABLE OPTIONS					     *tabula-options*
 |Tabula_LNumUnderline|		Show line numbers underlined
 |Tabula_SearchStandOut|		How to display search occurrences
 |Tabula_TodoUnderline|		How to display TODOs and similar
+|Tabula_CharValuesColored|	How To Display Typographic Character Values
+				(i.e. bold, italic, underlined characters)
 
 -----------------------------------------------------------------------------
 DISPLAY STATEMENTS IN BOLD FORMAT		       *Tabula_BoldStatement*
@@ -144,6 +143,21 @@ HOW TO DISPLAY TODOS AND SIMILAR		       *Tabula_TodoUnderline*
       Tabula_TodoUnderline = 1	display them underlined white
 
 Defaults to underlined display.
+
+-----------------------------------------------------------------------------
+HOW TO DISPLAY TYPOGRAPHIC CHARACTER VALUES	   *Tabula_CharValuesColored*
+>
+      Tabula_CharValuesColored = 0	colored in addition to typographics
+      Tabula_CharValuesColored = 1	not colored, term. italics enhanced
+      Tabula_CharValuesColored = 2	not colored, term. underlined enhanced
+
+Defaults to a colored typographics character values display.
+
+NOTE: Colored is to be preferred in terminal-based vim because there is no
+      easy way to distinguish italic from underline. Currently there are two
+      modes: enhance (reversed display) italics and enhance underline two
+      ease this situation a bit. These sub-modes do not affect the GUI
+      display, however.
 
 -----------------------------------------------------------------------------
 

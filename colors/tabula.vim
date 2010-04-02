@@ -14,6 +14,16 @@
 " Install:       Put this file in the users colors directory (~/.vim/colors)
 "                then load it with :colorscheme tabula
 " =============================================================================
+" CHANGES
+" - Multiple constant colors reworked
+" FIXME
+" - Tabula dialog does not reset constant colors to one color only when they
+"   had been previously changed to multiple colors. Needs ":color tabula" then.
+"   (Could there be some overflow on multiple Tabula() calls?)
+"   Ditto on some other local changes, e.g. underline TODO.
+"   Appears to have no effect if tabula changed while being in another window.
+"   Console terminal:
+"   When character display set to not colored, colors remain, other atts change.
 " TODO
 " - add an options settings menu to gvim
 " - keep options in some setup file, e.g.:
@@ -22,17 +32,16 @@
 "   such that text files be displayed other than e.g. c sources
 " =============================================================================
 
+" Preliminaries
+" 
 hi clear
 set background=dark
-"set background=light
+
 if exists("syntax_on")
-    syntax reset
+  syntax reset
 endif
 let g:colors_name = "tabula"
-"let g:Tabula_setOptions = 0
 
-if !exists("s:tabula_main")
-  function! s:tabula_main()
 "==============================================================================
 "			       Option Settings				   {{{1
 "==============================================================================
@@ -162,6 +171,48 @@ if exists("g:Tabula_TodoUnderline")
   let s:TodoUnderline = g:Tabula_TodoUnderline
 endif
 
+"------------------------------------------------------------------------------
+" How To Display Typographic Character Values:				   {{{2
+"	Tabula_CharValuesColored = 0	colored in addition to typographics
+"	Tabula_CharValuesColored = 1	not colored, term. italics enhanced
+"	Tabula_CharValuesColored = 2	not colored, term. underlined enhanced
+" Defaults to a colored typographics character values display.
+"
+" NOTE: Colored is to be preferred in terminal-based vim because there is no
+"       easy way to distinguish italic from underline. Currently there are two
+"       modes: enhance (reversed display) italics and enhance underline two
+"       ease this situation a bit. This sub-modes do not affect the GUI display
+"       however.
+"------------------------------------------------------------------------------
+"
+let s:CharValuesColored=0
+if exists("g:Tabula_CharValuesColored")
+  let s:CharValuesColored = g:Tabula_CharValuesColored
+endif
+
+"==============================================================================
+"			      Initial Tabula Call			   {{{1
+"==============================================================================
+
+" NOTE: Still does not work. It appears that the buffer colors will not be
+" re-evaluated upin a simple parameter change.
+" "colorscheme tabula" still needs to be issued after a parameter change through
+" a Tabula() call.
+
+"call TabulaMain()
+
+"==============================================================================
+"			    The Tabula Main Function
+"==============================================================================
+
+" if !exists("TabulaMain")
+"   function! TabulaMain()
+" 
+"   if exists("syntax_on")
+"     syntax reset
+"   endif
+"   let g:colors_name = "tabula"
+
 "==============================================================================
 "			      Color Definitions				   {{{1
 "==============================================================================
@@ -171,8 +222,8 @@ endif
 "==============================================================================
 "
 " This is default unless we really want light.
-" (still TODO)
-" if &background != "light"
+"
+" NOTE: light background is still TODO (may never happen, though)
 
 "=============================== Font Elements =========================== {{{3
 "
@@ -243,7 +294,7 @@ hi Directory		guifg=#25B9F8	guibg=NONE							ctermfg=2
 " Error Colors:								   {{{4
 "------------------------------------------------------------------------------
 "
-if s:DarkError
+if s:DarkError == 1
   hi Error		guifg=NONE	guibg=#303800	gui=NONE	ctermfg=NONE 	ctermbg=237	cterm=NONE
 else
   if s:CurColor == "red"
@@ -266,7 +317,7 @@ hi Folded		guifg=#44DDDD	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
 " Ignore Variants:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:InvisibleIgnore
+if s:InvisibleIgnore == 1
   " completely invisible
   hi Ignore		guifg=bg	guibg=NONE			ctermfg=23
   hi NonText		guifg=bg	guibg=NONE			ctermfg=23
@@ -282,7 +333,7 @@ endif
 " underlined.
 "------------------------------------------------------------------------------
 "
-if s:LNumUnderline
+if s:LNumUnderline == 1
   hi LineNr		guifg=#00FF00	guibg=#005080	gui=underline	ctermfg=84	ctermbg=24	cterm=underline
 else
   hi LineNr		guifg=#00FF00	guibg=#005080			ctermfg=84	ctermbg=24
@@ -322,12 +373,63 @@ hi SpecialKey		guifg=#00F4F4	guibg=#266955
 " Todo Variants:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:TodoUnderline
+if s:TodoUnderline == 1
   " Underlined
   hi Todo		guifg=#AFD7D7	guibg=NONE	gui=underline	ctermfg=159	ctermbg=NONE	cterm=underline
 else
   " Blue background
   hi Todo		guifg=#00FFFF	guibg=#0000FF			ctermfg=51	ctermbg=4
+endif
+
+"================================ Typographics =========================== {{{3
+"
+" Defines some common colors to be used for typographic entities.
+
+"------------------------------------------------------------------------------
+" Title Lines:								   {{{4
+"------------------------------------------------------------------------------
+
+hi tabulaTitle1		guifg=#FFFF00				 	ctermfg=226
+hi tabulaTitle2		guifg=#FDAD85					ctermfg=216
+hi tabulaTitle3		guifg=#D8AFAE					ctermfg=181
+hi tabulaTitle4		guifg=#ACBCBC					ctermfg=250
+hi tabulaTitle5		guifg=#87DA87					ctermfg=114
+hi tabulaTitle6		guifg=#00D700					ctermfg=40
+hi tabulaTitle7		guifg=#00DAD6					ctermfg=44
+hi tabulaTitle8		guifg=#00AEFF					ctermfg=39
+hi tabulaTitle9		guifg=#0088FF					ctermfg=33
+
+"------------------------------------------------------------------------------
+" Common Typographic Character Values:					   {{{4
+"------------------------------------------------------------------------------
+
+if s:CharValuesColored == 0
+  hi tabulaBold		guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
+  hi tabulaItalic	guifg=#87D7EF			gui=italic	ctermfg=115			cterm=underline
+  hi tabulaBoldItalic	guifg=#87FFD7			gui=bold,italic ctermfg=122			cterm=bold,underline
+  hi tabulaItalicBold	guifg=#87D7EF			gui=bold,italic ctermfg=123			cterm=bold,underline
+  hi tabulaUnderline    guifg=#87D7D7            	gui=underline	ctermfg=119			cterm=underline
+  hi tabulaUnderlineItalic guifg=#87D7D7		gui=underline,italic ctermfg=121		cterm=underline
+  hi tabulaBoldUnderline guifg=#87FFD7			gui=bold,underline ctermfg=119			cterm=bold,underline
+  hi tabulaBoldUnderlineItalic guifg=#87D7EF		gui=bold,underline,italic ctermfg=121		cterm=bold,underline
+elseif s:CharValuesColored == 1
+  hi tabulaBold						gui=bold					cterm=bold
+  hi tabulaItalic					gui=italic					cterm=reverse
+  hi tabulaBoldItalic					gui=bold,italic 				cterm=bold,reverse
+  hi tabulaItalicBold					gui=bold,italic 				cterm=bold,reverse
+  hi tabulaUnderline            		    	gui=underline					cterm=underline
+  hi tabulaUnderlineItalic 				gui=underline,italic 				cterm=underline,reverse
+  hi tabulaBoldUnderline 				gui=bold,underline				cterm=bold,underline
+  hi tabulaBoldUnderlineItalic				gui=bold,underline,italic			cterm=bold,underline,reverse
+else
+  hi tabulaBold						gui=bold					cterm=bold
+  hi tabulaItalic					gui=italic					cterm=underline
+  hi tabulaBoldItalic					gui=bold,italic 				cterm=bold,underline
+  hi tabulaItalicBold					gui=bold,italic 				cterm=bold,underline
+  hi tabulaUnderline            		    	gui=underline					cterm=reverse
+  hi tabulaUnderlineItalic 				gui=underline,italic 				cterm=underline,reverse
+  hi tabulaBoldUnderline 				gui=bold,underline				cterm=bold,reverse
+  hi tabulaBoldUnderlineItalic				gui=bold,underline,italic			cterm=bold,underline,reverse
 endif
 
 "================================ Programming ============================ {{{3
@@ -343,14 +445,14 @@ hi Comment		guifg=#00C5E7					ctermfg=51
 " Constant Colors:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:FlatConstants
+if s:FlatConstants == 1
   hi Constant		guifg=#7DDCDB					ctermfg=123
 else
-  hi Boolean		guifg=#7EDBD8					ctermfg=123
-  hi Character		guifg=#AFD000					ctermfg=148
+  hi Boolean		guifg=#DD7E3A					ctermfg=123
+  hi Character		guifg=#BFE000					ctermfg=148
   hi Float		guifg=#AF87DF					ctermfg=141
-  hi Number		guifg=#00A7F7					ctermfg=39
-  hi String		guifg=#00DF00					ctermfg=46
+  hi Number		guifg=#0080FF					ctermfg=39
+  hi String		guifg=#00DF50					ctermfg=46
 endif
 
 "------------------------------------------------------------------------------
@@ -369,7 +471,7 @@ endif
 " Other Programming:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:BoldStatement
+if s:BoldStatement == 1
   hi Statement		guifg=#DEDE00			gui=bold	ctermfg=11			cterm=bold
 else
   hi Statement		guifg=#E4E300			gui=NONE	ctermfg=11
@@ -392,39 +494,38 @@ hi tclBookends		guifg=#7CFC94	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 
 let html_my_rendering=1
 
-hi htmlBold		guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
-hi htmlBoldItalic	guifg=#87D7EF			gui=bold	ctermfg=117			cterm=bold
-hi htmlBoldUnderline	guifg=#87FFD7			gui=bold,underline ctermfg=122			cterm=bold,underline
-hi htmlBoldUnderlineItalic guifg=#87D7EF		gui=bold,underline ctermfg=117			cterm=bold,underline
+hi link htmlItalic		tabulaItalic
+hi link htmlBold		tabulaBold
+hi link htmlBoldItalic		tabulaBoldItalic
+hi link htmlUnderline 		tabulaUnderline
+hi link htmlUnderlineItalic	tabulaUnderlineItalic
+hi link htmlBoldUnderline	tabulaBoldUnderline
+hi link htmlBoldUnderlineItalic	tabulaBoldUnderlineItalic
+
 hi htmlH1		guifg=#00FF00	guibg=NONE	gui=bold,underline ctermfg=2			cterm=bold,underline
 hi htmlH2		guifg=#00FF00	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 hi htmlH3		guifg=#00FF00	guibg=NONE	gui=NONE	ctermfg=2
 hi htmlH4		guifg=#00C700	guibg=NONE	gui=underline	ctermfg=34			cterm=underline
 hi htmlH5		guifg=#00C700	guibg=NONE	gui=NONE	ctermfg=34
 hi htmlH6		guifg=#00A700	guibg=NONE	gui=underline	ctermfg=28			cterm=underline
-hi htmlItalic		guifg=#87D7D7			gui=NONE	ctermfg=116
 hi htmlLink		guifg=#8787D7			gui=underline   ctermfg=105			cterm=underline
-hi htmlUnderline                			gui=underline					cterm=underline
-hi htmlUnderlineItalic	guifg=#87D7D7			gui=underline	ctermfg=116			cterm=underline
 
 "================================== VimWiki ============================== {{{3
 "
 " (see: http://vim.sourceforge.net/scripts/script.php?script_id=2226)
 " (:help vimwiki)
-"
-" The header colors match those of the VimOutliner levels.
 
-hi wikiHeader1		guifg=#FFFF00				 	ctermfg=226
-hi wikiHeader2		guifg=#FDAD85					ctermfg=216
-hi wikiHeader3		guifg=#D7AFAF					ctermfg=181
-hi wikiHeader4		guifg=#ACBCBC					ctermfg=250
-hi wikiHeader5		guifg=#87D787					ctermfg=114
-hi wikiHeader6		guifg=#00D700					ctermfg=40
+hi link wikiHeader1	tabulaTitle1
+hi link wikiHeader2	tabulaTitle2
+hi link wikiHeader3	tabulaTitle3
+hi link wikiHeader4	tabulaTitle4
+hi link wikiHeader5	tabulaTitle5
+hi link wikiHeader6	tabulaTitle6
 
-hi wikiBold		guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
-hi wikiItalic		guifg=#87D7EF			gui=underline					cterm=underline
-hi wikiBoldItalic	guifg=#87FFD7			gui=bold,underline ctermfg=122			cterm=bold,underline
-hi wikiItalicBold	guifg=#87D7EF			gui=bold,underline 				cterm=bold,underline
+hi link wikiBold	tabulaBold
+hi link wikiItalic	tabulaItalic
+hi link wikiBoldItalic	tabulaBoldItalic
+hi link wikiItalicBold	tabulaItalicBold
 
 " TODO  Why does this not work?
 "hi wikiLink		guifg=#00A700	guibg=NONE	gui=underline	ctermfg=28			cterm=underline
@@ -440,15 +541,15 @@ hi wikiEmoticons	guifg=#FF0000	guibg=#AFAF00	gui=bold	ctermfg=196	ctermbg=142
 " Indent Level:								   {{{4
 "------------------------------------------------------------------------------
 
-hi OL1			guifg=#FFFF00				 	ctermfg=226
-hi OL2			guifg=#FDAD85					ctermfg=216
-hi OL3			guifg=#D8AFAE					ctermfg=181
-hi OL4			guifg=#ACBCBC					ctermfg=250
-hi OL5			guifg=#87DA87					ctermfg=114
-hi OL6			guifg=#00D700					ctermfg=40
-hi OL7			guifg=#00DAD6					ctermfg=44
-hi OL8			guifg=#00AEFF					ctermfg=39
-hi OL9			guifg=#0088FF					ctermfg=33
+hi link OL1	tabulaTitle1
+hi link OL2	tabulaTitle2
+hi link OL3	tabulaTitle3
+hi link OL4	tabulaTitle4
+hi link OL5	tabulaTitle5
+hi link OL6	tabulaTitle6
+hi link OL7	tabulaTitle7
+hi link OL8	tabulaTitle8
+hi link OL9	tabulaTitle9
 
 "------------------------------------------------------------------------------
 " Tags:									   {{{4
@@ -525,7 +626,19 @@ hi UT6			guifg=#71D289					ctermfg=84
 hi UT7			guifg=#71D289					ctermfg=84 
 hi UT8			guifg=#71D289					ctermfg=84 
 hi UT9			guifg=#71D289					ctermfg=84
-	
+
+"================================== Txt2Tags ============================= {{{3
+"
+" Txt2tags is a universal text formatting and conversion tool
+" (see: http://txt2tags.sf.net)
+" TODO There are issues with the txt2tags syntax definitions so this must suffice.
+"
+hi link t2tTitle	tabulaTitle1
+hi link t2tNumTitle	tabulaTitle1
+
+hi link t2tComment	Comment
+hi link t2tCommentArea	Comment
+
 "=================================== Others ============================== {{{3
 "
 " colors for experimental spelling error highlighting
@@ -534,10 +647,8 @@ hi UT9			guifg=#71D289					ctermfg=84
 hi spellErr		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
 hi BadWord		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
 
-  endfunction
-endif
-
-call s:tabula_main()
+"   endfunction	" End of TabulaMain function
+" endif
 
 "==============================================================================
 "			       Options Processor			   {{{1
@@ -550,29 +661,31 @@ call s:tabula_main()
 function! Tabula()
   call inputsave()
   let thisOption = 1
-  while thisOption >= 1 && thisOption <= 9
+  while thisOption >= 1 && thisOption <= 10
     redraw
     let thisOption = inputlist([
 	  \		     "Select a 'Tabula_' option:",
-	  \		     "1. BoldStatement    Display statements in bold",
-	  \		     "2. ColorPre         Set Color for preprocessor statements",
-	  \		     "3. CurColor         Set GUI cursor color",
-	  \		     "4. DarkError        Use dark error background",
-	  \		     "5. FlatConstants    Use multiple colors for constant values",
-	  \		     "6. InvisibleIgnore  Display of Ignore and NonText characters",
-	  \		     "7. LNumUnderline    Show line numbers underlined",
-	  \		     "8. SearchStandOut   Display of search occurrences",
-	  \		     "9. TodoUnderline    Display of TODOs and similar"
+	  \		     "1. BoldStatement      Display statements in bold",
+	  \		     "2. ColorPre           Set Color for preprocessor statements",
+	  \		     "3. CurColor           Set GUI cursor color",
+	  \		     "4. DarkError          Use dark error background",
+	  \		     "5. FlatConstants      Use multiple colors for constant values",
+	  \		     "6. InvisibleIgnore    Display of Ignore and NonText characters",
+	  \		     "7. LNumUnderline      Show line numbers underlined",
+	  \		     "8. SearchStandOut     Display of search occurrences",
+	  \		     "9. TodoUnderline      Display of TODOs and similar",
+    	  \		     "10. CharValuesColored Display colored typographic character values"
 	  \		     ])
 
     redraw
-    if thisOption >= 1 && thisOption <= 9
+    if thisOption >= 1 && thisOption <= 10
       call Tabula_{thisOption}()
-      "let g:Tabula_setOptions = 1
     endif
   endwhile
   call inputrestore()
-  call s:tabula_main()
+
+"  NOTE: Removed, the colors still cannot be chnged on the fly.
+"  call TabulaMain()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -645,7 +758,7 @@ endfunction
 "
 function! Tabula_4()
   let curOption = "light "
-  if s:DarkError
+  if s:DarkError == 1
     let curOption = "dark "
   endif
   let optionValue = inputlist([
@@ -768,6 +881,32 @@ function! Tabula_9()
     let g:Tabula_TodoUnderline = 1
   elseif optionValue == 2
     let g:Tabula_TodoUnderline = 0
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Typographic Character Values Display:					   {{{2
+"------------------------------------------------------------------------------
+"
+function! Tabula_10()
+  let curOption = "colored"
+  if s:CharValuesColored == 1
+    let curOption = "not colored, terminal italics reversed"
+  elseif s:CharValuesColored == 2
+    let curOption = "not colored, terminal underline reversed"
+  endif
+  let optionValue = inputlist([
+	\		      "How to display bold, italic, underlined characters (currently ".curOption.")?",
+	\		      "1. colored",
+	\		      "2. not colored, terminal italics reversed",
+  	\ 		      "3. not colored, terminal underline reversed"
+  	\		      ])
+  if optionValue == 1
+    let g:Tabula_CharValuesColored = 0
+  elseif optionValue == 2
+    let g:Tabula_CharValuesColored = 1
+  elseif optionValue == 3
+    let g:Tabula_CharValuesColored = 3
   endif
 endfunction
 
