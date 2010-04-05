@@ -1,9 +1,9 @@
 " ============================================================================
 " Filename:	 tabula.vim
-" Last Modified: 2010-03-16
-" Version:       1.4
+" Last Modified: 2010-04-05
+" Version:       1.4.2
 " Maintainer:	 Bernd Pol (bernd.pol AT online DOT de)
-" Copyright:	 2006-2009 Bernd Pol
+" Copyright:	 2006-2010 Bernd Pol
 "                This script is free software; you can redistribute it and/or 
 "                modify it under the terms of the GNU General Public License as 
 "                published by the Free Software Foundation; either version 2 of 
@@ -14,22 +14,22 @@
 " Install:       Put this file in the users colors directory (~/.vim/colors)
 "                then load it with :colorscheme tabula
 " =============================================================================
-" CHANGES
-" - Multiple constant colors reworked
-" FIXME
-" - Tabula dialog does not reset constant colors to one color only when they
-"   had been previously changed to multiple colors. Needs ":color tabula" then.
-"   (Could there be some overflow on multiple Tabula() calls?)
-"   Ditto on some other local changes, e.g. underline TODO.
-"   Appears to have no effect if tabula changed while being in another window.
-"   Console terminal:
-"   When character display set to not colored, colors remain, other atts change.
-" TODO
+" CHANGES:
+" - Per Tabula() dialog variable settings rewritten as functions.
+" - Tabula() dialog rewritten so that settings changes will be immediate.
+" - Two addional display options (bold, not enhanced) for Todos.
+"
+" FIXME:
+"
+" TODO:
+" - bind Tabula() to a shortkey sequence
 " - add an options settings menu to gvim
 " - keep options in some setup file, e.g.:
 "   tabula.rc, sub e.g. "<OPTIONS> ... </OPTIONS>" marks
 " - options set up per directory (autoload option)
 "   such that text files be displayed other than e.g. c sources
+" - light background colors
+" - save new option settings in some configuration file
 " =============================================================================
 
 " Preliminaries
@@ -163,7 +163,9 @@ endif
 " How To Display TODOs And Similar:					   {{{2
 "	Tabula_TodoUnderline = 0	display on a blue background
 "	Tabula_TodoUnderline = 1	display them underlined white
-" Defaults to underlined display.
+"	Tabula_TodoUnderline = 2	display them bold
+"	Tabula_TodoUnderline = 3	do not enhance them at all
+" Defaults to underlined white display.
 "------------------------------------------------------------------------------
 "
 let s:TodoUnderline=1
@@ -191,39 +193,203 @@ if exists("g:Tabula_CharValuesColored")
 endif
 
 "==============================================================================
-"			      Initial Tabula Call			   {{{1
+"			       Color Definitions			   {{{1
 "==============================================================================
 
-" NOTE: Still does not work. It appears that the buffer colors will not be
-" re-evaluated upin a simple parameter change.
-" "colorscheme tabula" still needs to be issued after a parameter change through
-" a Tabula() call.
-
-"call TabulaMain()
-
 "==============================================================================
-"			    The Tabula Main Function
+"			       Variable Settings			   {{{2
 "==============================================================================
 
-" if !exists("TabulaMain")
-"   function! TabulaMain()
-" 
-"   if exists("syntax_on")
-"     syntax reset
-"   endif
-"   let g:colors_name = "tabula"
-
-"==============================================================================
-"			      Color Definitions				   {{{1
-"==============================================================================
+"------------------------------------------------------------------------------
+" Bold Satements:							   {{{4
+"------------------------------------------------------------------------------
 "
-"==============================================================================
-"				Dark Background				   {{{2
-"==============================================================================
+function! TabulaSettingBoldStatement()
+  if s:BoldStatement == 1
+    hi Statement		guifg=#DEDE00			gui=bold	ctermfg=11			cterm=bold
+  else
+    hi Statement		guifg=#E4E300			gui=NONE	ctermfg=11
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Preprocessor Variants:						   {{{4
+"------------------------------------------------------------------------------
 "
-" This is default unless we really want light.
+function! TabulaSettingColorPre()
+  if s:ColorPre == "red"
+    hi PreProc		guifg=#FF5F5F	guibg=bg			ctermfg=203
+  elseif s:ColorPre == "yellow"
+    hi PreProc		guifg=#AFFF00	guibg=bg			ctermfg=154
+  elseif s:ColorPre == "blue"
+    hi PreProc		guifg=#918EE4	guibg=bg			ctermfg=105
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Cursor Colors:							   {{{3
+"------------------------------------------------------------------------------
 "
-" NOTE: light background is still TODO (may never happen, though)
+function! TabulaSettingCurColor()
+  if s:CurColor == "yellow"
+    hi Cursor		guifg=#000000	guibg=#EFEF00
+  elseif s:CurColor == "red"
+    " Note: Input cursor will be invisible on Error Group
+    hi Cursor		guifg=#00007F	guibg=#F70000
+  elseif s:CurColor == "blue"
+    hi Cursor		guifg=#00007F	guibg=#00EFEF
+  elseif s:CurColor == "white"
+    hi Cursor		guifg=#000000	guibg=#FFFFFF
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Error Colors:								   {{{3
+"------------------------------------------------------------------------------
+"
+function! TabulaSettingErrorBackground()
+  if s:DarkError == 1
+    " This is a fairly non-distracting error display. Good for typing longer texts.
+    hi Error		guifg=NONE	guibg=#303800	gui=NONE	ctermfg=NONE 	ctermbg=237	cterm=NONE
+  else
+    " Use a prominent error display, e.g. for programming.
+    if s:CurColor == "red"
+      " Note: We need another background in this case to keep the cursor visible.
+      hi Error		guifg=#FF0000	guibg=#FFFF00	gui=bold	ctermfg=11 	ctermbg=9	cterm=NONE
+    else
+      hi Error		guifg=#FFFF00	guibg=#FF0000	gui=NONE	ctermfg=11 	ctermbg=9	cterm=NONE
+    endif
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Constant Colors:							   {{{4
+"------------------------------------------------------------------------------
+"
+function! TabulaSettingFlatConstants()
+  if s:FlatConstants == 1
+    hi Constant		guifg=#7DDCDB					ctermfg=123
+    hi Boolean		guifg=#7DDCDB					ctermfg=123
+    hi Character	guifg=#7DDCDB					ctermfg=123
+    hi Float		guifg=#7DDCDB					ctermfg=123
+    hi Number		guifg=#7DDCDB					ctermfg=123
+    hi String		guifg=#7DDCDB					ctermfg=123
+  else
+    hi Constant		guifg=#7DDCDB					ctermfg=123
+    hi Boolean		guifg=#DD7E3A					ctermfg=123
+    hi Character	guifg=#BFE000					ctermfg=148
+    hi Float		guifg=#AF87DF					ctermfg=141
+    hi Number		guifg=#0080FF					ctermfg=39
+    hi String		guifg=#00DF50					ctermfg=46
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Ignore Variants:							   {{{3
+"------------------------------------------------------------------------------
+"
+function! TabulaSettingInvisibleIgnore()
+  if s:InvisibleIgnore == 1
+    " completely invisible
+    hi Ignore		guifg=bg	guibg=NONE			ctermfg=23
+    hi NonText		guifg=bg	guibg=NONE			ctermfg=23
+  else
+    " nearly invisible
+    hi Ignore		guifg=#005FAF	guibg=NONE			ctermfg=26
+    hi NonText		guifg=#005FAF	guibg=NONE			ctermfg=26
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Line Number Variants:							   {{{3
+"------------------------------------------------------------------------------
+"
+" Lines can sometimes be more precisely identified if the line numbers are
+" underlined.
+"
+function! TabulaSettingLNumUnderline()
+  if s:LNumUnderline == 1
+    hi LineNr		guifg=#00FF00	guibg=#005080	gui=underline	ctermfg=84	ctermbg=24	cterm=underline
+  else
+    hi LineNr		guifg=#00FF00	guibg=#005080			ctermfg=84	ctermbg=24
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Search Stand Out Variants:						   {{{3
+"------------------------------------------------------------------------------
+"
+function! TabulaSettingSearchStandOut()
+  if s:SearchStandOut == 0
+    hi IncSearch		guifg=#D0D0D0	guibg=#206828	gui=NONE	ctermfg=NONE	ctermbg=22	cterm=NONE
+    hi Search		guifg=NONE	guibg=#212a81			ctermfg=NONE	ctermbg=18
+  elseif s:SearchStandOut == 1
+    hi IncSearch	guifg=#D0D0D0	guibg=#206828	gui=underline	ctermfg=252	ctermbg=22	cterm=underline
+    hi Search		guifg=#FDAD5D	guibg=#202880	gui=underline	ctermfg=215	ctermbg=18	cterm=underline
+  elseif s:SearchStandOut == 2
+    hi IncSearch	guibg=#D0D0D0	guifg=#206828	gui=underline	ctermbg=252	ctermfg=22	cterm=underline
+    hi Search		guibg=#FDAD5D	guifg=#202880	gui=underline	ctermbg=215	ctermfg=18	cterm=underline
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Todo Variants:							   {{{3
+"------------------------------------------------------------------------------
+"
+function! TabulaSettingTodoUnderline()
+  if s:TodoUnderline == 0
+    " Blue background
+    hi Todo		guifg=#00FFFF	guibg=#0000FF	gui=NONE	ctermfg=51	ctermbg=4	cterm=NONE
+  elseif s:TodoUnderline == 1
+    " Underlined
+    hi Todo		guifg=#AFD7D7	guibg=NONE	gui=underline	ctermfg=159	ctermbg=NONE	cterm=underline
+  elseif s:TodoUnderline == 2
+    " Bold
+    hi Todo		guifg=NONE	guibg=NONE	gui=bold	ctermfg=NONE	ctermbg=NONE	cterm=bold
+  elseif s:TodoUnderline == 3
+    " Not enhanced at all
+    hi Todo		guifg=NONE	guibg=NONE	gui=NONE	ctermfg=NONE	ctermbg=NONE	cterm=NONE
+  endif
+endfunction
+
+"------------------------------------------------------------------------------
+" Common Typographic Character Values:					   {{{3
+"------------------------------------------------------------------------------
+
+function! TabulaSettingCharValuesColored()
+  if s:CharValuesColored == 0
+    hi tabulaBold	guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
+    hi tabulaItalic	guifg=#87D7EF			gui=italic	ctermfg=115			cterm=underline
+    hi tabulaBoldItalic	guifg=#87FFD7			gui=bold,italic ctermfg=122			cterm=bold,underline
+    hi tabulaItalicBold	guifg=#87D7EF			gui=bold,italic ctermfg=123			cterm=bold,underline
+    hi tabulaUnderline    guifg=#87D7D7            	gui=underline	ctermfg=119			cterm=underline
+    hi tabulaUnderlineItalic guifg=#87D7D7		gui=underline,italic ctermfg=121		cterm=underline
+    hi tabulaBoldUnderline guifg=#87FFD7		gui=bold,underline ctermfg=119			cterm=bold,underline
+    hi tabulaBoldUnderlineItalic guifg=#87D7EF		gui=bold,underline,italic ctermfg=121		cterm=bold,underline
+  elseif s:CharValuesColored == 1
+    hi tabulaBold		guifg=NONE		gui=bold	ctermfg=NONE			cterm=bold
+    hi tabulaItalic		guifg=NONE		gui=italic	ctermfg=NONE			cterm=reverse
+    hi tabulaBoldItalic		guifg=NONE		gui=bold,italic ctermfg=NONE			cterm=bold,reverse
+    hi tabulaItalicBold		guifg=NONE		gui=bold,italic ctermfg=NONE			cterm=bold,reverse
+    hi tabulaUnderline          guifg=NONE	    	gui=underline	ctermfg=NONE			cterm=underline
+    hi tabulaUnderlineItalic  	guifg=NONE		gui=underline,italic      ctermfg=NONE		cterm=underline,reverse
+    hi tabulaBoldUnderline 	guifg=NONE		gui=bold,underline	  ctermfg=NONE		cterm=bold,underline
+    hi tabulaBoldUnderlineItalic guifg=NONE		gui=bold,underline,italic ctermfg=NONE		cterm=bold,underline,reverse
+  else
+    hi tabulaBold		guifg=NONE		gui=bold	ctermfg=NONE			cterm=bold
+    hi tabulaItalic		guifg=NONE		gui=italic	ctermfg=NONE			cterm=underline
+    hi tabulaBoldItalic		guifg=NONE		gui=bold,italic ctermfg=NONE			cterm=bold,underline
+    hi tabulaItalicBold		guifg=NONE		gui=bold,italic ctermfg=NONE			cterm=bold,underline
+    hi tabulaUnderline          guifg=NONE 		gui=underline	ctermfg=NONE			cterm=reverse
+    hi tabulaUnderlineItalic 	guifg=NONE		gui=underline,italic 	ctermfg=NONE		cterm=underline,reverse
+    hi tabulaBoldUnderline 	guifg=NONE		gui=bold,underline	ctermfg=NONE		cterm=bold,reverse
+    hi tabulaBoldUnderlineItalic guifg=NONE		gui=bold,underline,italic ctermfg=NONE		cterm=bold,underline,reverse
+  endif
+endfunction
+
+"==============================================================================
+"			       Constant Settings			   {{{2
+"==============================================================================
 
 "=============================== Font Elements =========================== {{{3
 "
@@ -231,6 +397,7 @@ hi Normal		guifg=#71D289	guibg=#004A41			ctermfg=84	ctermbg=23
 hi Underlined						gui=underline					cterm=underline
 
 "================================ Vim Specific =========================== {{{3
+
 "------------------------------------------------------------------------------
 " Version_7 Specials:							   {{{4
 "------------------------------------------------------------------------------
@@ -269,16 +436,7 @@ hi WildMenu		guifg=#20012e	guibg=#00a675	gui=bold	ctermfg=NONE	ctermbg=NONE	cter
 " Cursor Colors:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:CurColor == "yellow"
-  hi Cursor		guifg=#000000	guibg=#EFEF00
-elseif s:CurColor == "red"
-  " Note: Input cursor will be invisible on Error Group
-  hi Cursor		guifg=#00007F	guibg=#F70000
-elseif s:CurColor == "blue"
-  hi Cursor		guifg=#00007F	guibg=#00EFEF
-elseif s:CurColor == "white"
-  hi Cursor		guifg=#000000	guibg=#FFFFFF
-endif
+call TabulaSettingCurColor()
 
 "------------------------------------------------------------------------------
 " Diff Colors:								   {{{4
@@ -294,16 +452,10 @@ hi Directory		guifg=#25B9F8	guibg=NONE							ctermfg=2
 " Error Colors:								   {{{4
 "------------------------------------------------------------------------------
 "
-if s:DarkError == 1
-  hi Error		guifg=NONE	guibg=#303800	gui=NONE	ctermfg=NONE 	ctermbg=237	cterm=NONE
-else
-  if s:CurColor == "red"
-    " Note: We need another background in this case to keep the cursor visible.
-    hi Error		guifg=#FF0000	guibg=#FFFF00	gui=bold	ctermfg=11 	ctermbg=9	cterm=NONE
-  else
-    hi Error		guifg=#FFFF00	guibg=#FF0000	gui=NONE	ctermfg=11 	ctermbg=9	cterm=NONE
-  endif
-endif
+" Error display background may only be freely defined for text.
+call TabulaSettingErrorBackground()
+
+" Error messages won't change.
 hi ErrorMsg		guifg=#FFFFFF	guibg=#FF0000			ctermfg=7	ctermbg=1
 
 "------------------------------------------------------------------------------
@@ -317,27 +469,13 @@ hi Folded		guifg=#44DDDD	guibg=#4E4E4E			ctermfg=14 	ctermbg=240
 " Ignore Variants:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:InvisibleIgnore == 1
-  " completely invisible
-  hi Ignore		guifg=bg	guibg=NONE			ctermfg=23
-  hi NonText		guifg=bg	guibg=NONE			ctermfg=23
-else
-  " nearly invisible
-  hi Ignore		guifg=#005FAF	guibg=NONE			ctermfg=26
-  hi NonText		guifg=#005FAF	guibg=NONE			ctermfg=26
-endif
+call TabulaSettingInvisibleIgnore()
 
 "------------------------------------------------------------------------------
 " Line Number Variants:							   {{{4
-" Lines can sometimes be more precisely identified if the line numbers are
-" underlined.
 "------------------------------------------------------------------------------
 "
-if s:LNumUnderline == 1
-  hi LineNr		guifg=#00FF00	guibg=#005080	gui=underline	ctermfg=84	ctermbg=24	cterm=underline
-else
-  hi LineNr		guifg=#00FF00	guibg=#005080			ctermfg=84	ctermbg=24
-endif
+call TabulaSettingLNumUnderline()
 
 "------------------------------------------------------------------------------
 " Messages:								   {{{4
@@ -350,16 +488,7 @@ hi MoreMsg		guifg=#FFFFFF	guibg=#00A261	gui=NONE	ctermfg=7	ctermbg=28	cterm=NONE
 " Search Stand Out Variants:						   {{{4
 "------------------------------------------------------------------------------
 "
-if s:SearchStandOut == 0
-  hi IncSearch		guifg=#D0D0D0	guibg=#206828	gui=NONE	ctermfg=NONE	ctermbg=22	cterm=NONE
-  hi Search		guifg=NONE	guibg=#212a81			ctermfg=NONE	ctermbg=18
-elseif s:SearchStandOut == 1
-  hi IncSearch		guifg=#D0D0D0	guibg=#206828	gui=underline	ctermfg=252	ctermbg=22	cterm=underline
-  hi Search		guifg=#FDAD5D	guibg=#202880	gui=underline	ctermfg=215	ctermbg=18	cterm=underline
-elseif s:SearchStandOut == 2
-  hi IncSearch		guibg=#D0D0D0	guifg=#206828	gui=underline	ctermbg=252	ctermfg=22	cterm=underline
-  hi Search		guibg=#FDAD5D	guifg=#202880	gui=underline	ctermbg=215	ctermfg=18	cterm=underline
-endif
+call TabulaSettingSearchStandOut()
 
 "------------------------------------------------------------------------------
 " Specials:								   {{{4
@@ -373,13 +502,7 @@ hi SpecialKey		guifg=#00F4F4	guibg=#266955
 " Todo Variants:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:TodoUnderline == 1
-  " Underlined
-  hi Todo		guifg=#AFD7D7	guibg=NONE	gui=underline	ctermfg=159	ctermbg=NONE	cterm=underline
-else
-  " Blue background
-  hi Todo		guifg=#00FFFF	guibg=#0000FF			ctermfg=51	ctermbg=4
-endif
+call TabulaSettingTodoUnderline()
 
 "================================ Typographics =========================== {{{3
 "
@@ -402,35 +525,8 @@ hi tabulaTitle9		guifg=#0088FF					ctermfg=33
 "------------------------------------------------------------------------------
 " Common Typographic Character Values:					   {{{4
 "------------------------------------------------------------------------------
-
-if s:CharValuesColored == 0
-  hi tabulaBold		guifg=#87FFD7			gui=bold	ctermfg=122			cterm=bold
-  hi tabulaItalic	guifg=#87D7EF			gui=italic	ctermfg=115			cterm=underline
-  hi tabulaBoldItalic	guifg=#87FFD7			gui=bold,italic ctermfg=122			cterm=bold,underline
-  hi tabulaItalicBold	guifg=#87D7EF			gui=bold,italic ctermfg=123			cterm=bold,underline
-  hi tabulaUnderline    guifg=#87D7D7            	gui=underline	ctermfg=119			cterm=underline
-  hi tabulaUnderlineItalic guifg=#87D7D7		gui=underline,italic ctermfg=121		cterm=underline
-  hi tabulaBoldUnderline guifg=#87FFD7			gui=bold,underline ctermfg=119			cterm=bold,underline
-  hi tabulaBoldUnderlineItalic guifg=#87D7EF		gui=bold,underline,italic ctermfg=121		cterm=bold,underline
-elseif s:CharValuesColored == 1
-  hi tabulaBold						gui=bold					cterm=bold
-  hi tabulaItalic					gui=italic					cterm=reverse
-  hi tabulaBoldItalic					gui=bold,italic 				cterm=bold,reverse
-  hi tabulaItalicBold					gui=bold,italic 				cterm=bold,reverse
-  hi tabulaUnderline            		    	gui=underline					cterm=underline
-  hi tabulaUnderlineItalic 				gui=underline,italic 				cterm=underline,reverse
-  hi tabulaBoldUnderline 				gui=bold,underline				cterm=bold,underline
-  hi tabulaBoldUnderlineItalic				gui=bold,underline,italic			cterm=bold,underline,reverse
-else
-  hi tabulaBold						gui=bold					cterm=bold
-  hi tabulaItalic					gui=italic					cterm=underline
-  hi tabulaBoldItalic					gui=bold,italic 				cterm=bold,underline
-  hi tabulaItalicBold					gui=bold,italic 				cterm=bold,underline
-  hi tabulaUnderline            		    	gui=underline					cterm=reverse
-  hi tabulaUnderlineItalic 				gui=underline,italic 				cterm=underline,reverse
-  hi tabulaBoldUnderline 				gui=bold,underline				cterm=bold,reverse
-  hi tabulaBoldUnderlineItalic				gui=bold,underline,italic			cterm=bold,underline,reverse
-endif
+"
+call TabulaSettingCharValuesColored()
 
 "================================ Programming ============================ {{{3
 
@@ -438,44 +534,25 @@ endif
 " Comment Colors:							   {{{4
 "------------------------------------------------------------------------------
 "
-"hi Comment		guifg=#00C5E7					ctermfg=39	
 hi Comment		guifg=#00C5E7					ctermfg=51
 
 "------------------------------------------------------------------------------
 " Constant Colors:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:FlatConstants == 1
-  hi Constant		guifg=#7DDCDB					ctermfg=123
-else
-  hi Boolean		guifg=#DD7E3A					ctermfg=123
-  hi Character		guifg=#BFE000					ctermfg=148
-  hi Float		guifg=#AF87DF					ctermfg=141
-  hi Number		guifg=#0080FF					ctermfg=39
-  hi String		guifg=#00DF50					ctermfg=46
-endif
+call TabulaSettingFlatConstants()
 
 "------------------------------------------------------------------------------
 " Preprocessor Variants:						   {{{4
 "------------------------------------------------------------------------------
 "
-if s:ColorPre == "red"
-  hi PreProc		guifg=#FF5F5F	guibg=bg			ctermfg=203
-elseif s:ColorPre == "yellow"
-  hi PreProc		guifg=#AFFF00	guibg=bg			ctermfg=154
-elseif s:ColorPre == "blue"
-  hi PreProc		guifg=#918EE4	guibg=bg			ctermfg=105
-endif
+call TabulaSettingColorPre()
 
 "------------------------------------------------------------------------------
 " Other Programming:							   {{{4
 "------------------------------------------------------------------------------
 "
-if s:BoldStatement == 1
-  hi Statement		guifg=#DEDE00			gui=bold	ctermfg=11			cterm=bold
-else
-  hi Statement		guifg=#E4E300			gui=NONE	ctermfg=11
-endif
+call TabulaSettingBoldStatement()
 
 hi Identifier		guifg=#FDAE5A					ctermfg=215			cterm=NONE
 hi Type			guifg=#F269E4	guibg=bg	gui=NONE	ctermfg=213
@@ -502,12 +579,22 @@ hi link htmlUnderlineItalic	tabulaUnderlineItalic
 hi link htmlBoldUnderline	tabulaBoldUnderline
 hi link htmlBoldUnderlineItalic	tabulaBoldUnderlineItalic
 
+" Headings colors are not unified to tabulaTitle colors to keep them better distinguishable from the surrounding tags.
 hi htmlH1		guifg=#00FF00	guibg=NONE	gui=bold,underline ctermfg=2			cterm=bold,underline
 hi htmlH2		guifg=#00FF00	guibg=NONE	gui=bold	ctermfg=2			cterm=bold
 hi htmlH3		guifg=#00FF00	guibg=NONE	gui=NONE	ctermfg=2
 hi htmlH4		guifg=#00C700	guibg=NONE	gui=underline	ctermfg=34			cterm=underline
 hi htmlH5		guifg=#00C700	guibg=NONE	gui=NONE	ctermfg=34
 hi htmlH6		guifg=#00A700	guibg=NONE	gui=underline	ctermfg=28			cterm=underline
+
+" I you want to display HTML headings using the tabulaTitle unified colors uncomment the following and comment the above.
+" hi link htmlH1		tabulaTitle1
+" hi link htmlH2		tabulaTitle2
+" hi link htmlH3		tabulaTitle3
+" hi link htmlH4		tabulaTitle4
+" hi link htmlH5		tabulaTitle5
+" hi link htmlH6		tabulaTitle6
+
 hi htmlLink		guifg=#8787D7			gui=underline   ctermfg=105			cterm=underline
 
 "================================== VimWiki ============================== {{{3
@@ -654,6 +741,8 @@ hi BadWord		guifg=#E4E300			gui=underline	ctermfg=11			cterm=underline
 "			       Options Processor			   {{{1
 "==============================================================================
 "
+" Note: The following variable settings will be changed only locally.
+
 "------------------------------------------------------------------------------
 " Main Dialog:								   {{{2
 "------------------------------------------------------------------------------
@@ -664,7 +753,7 @@ function! Tabula()
   while thisOption >= 1 && thisOption <= 10
     redraw
     let thisOption = inputlist([
-	  \		     "Select a 'Tabula_' option:",
+	  \		     "Select a tabula settings option:",
 	  \		     "1. BoldStatement      Display statements in bold",
 	  \		     "2. ColorPre           Set Color for preprocessor statements",
 	  \		     "3. CurColor           Set GUI cursor color",
@@ -683,9 +772,6 @@ function! Tabula()
     endif
   endwhile
   call inputrestore()
-
-"  NOTE: Removed, the colors still cannot be chnged on the fly.
-"  call TabulaMain()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -703,10 +789,11 @@ function! Tabula_1()
 	\		      "2. not bold"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_BoldStatement = 1
+    let s:BoldStatement = 1
   elseif optionValue == 2
-    let g:Tabula_BoldStatement = 0
+    let s:BoldStatement = 0
   endif
+  call TabulaSettingBoldStatement()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -721,12 +808,13 @@ function! Tabula_2()
 	\		      "3. yellow"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_ColorPre = "blue"
+    let s:ColorPre = "blue"
   elseif optionValue == 2
-    let g:Tabula_ColorPre = "red"
+    let s:ColorPre = "red"
   elseif optionValue == 3
-    let g:Tabula_ColorPre = "yellow"
+    let s:ColorPre = "yellow"
    endif
+   call TabulaSettingColorPre()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -742,18 +830,22 @@ function! Tabula_3()
   	\		      "4. white"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_CurColor = "blue"
+    let s:CurColor = "blue"
   elseif optionValue == 2
-    let g:Tabula_CurColor = "red"
+    let s:CurColor = "red"
   elseif optionValue == 3
-    let g:Tabula_CurColor = "yellow"
+    let s:CurColor = "yellow"
   elseif optionValue == 4
-    let g:Tabula_CurColor = "white"
+    let s:CurColor = "white"
   endif
+  call TabulaSettingCurColor()
+  " Don't forget to adjust the error background display in order to keep the
+  " cursor visible.
+  call TabulaSettingErrorBackground()
 endfunction
 
 "------------------------------------------------------------------------------
-" Use Dark Error Background:						   {{{2
+" Error Background Display:						   {{{2
 "------------------------------------------------------------------------------
 "
 function! Tabula_4()
@@ -767,10 +859,11 @@ function! Tabula_4()
 	\		      "2. dark background"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_DarkError = 0
+    let s:DarkError = 0
   elseif optionValue == 2
-    let g:Tabula_DarkError = 1
+    let s:DarkError = 1
   endif
+  call TabulaSettingErrorBackground()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -788,10 +881,11 @@ function! Tabula_5()
 	\		      "2. use different color for each type"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_FlatConstants = 1
+    let s:FlatConstants = 1
   elseif optionValue == 2
-    let g:Tabula_FlatConstants = 0
+    let s:FlatConstants = 0
   endif
+  call TabulaSettingFlatConstants()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -809,10 +903,11 @@ function! Tabula_6()
 	\		      "2. slightly visible"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_InvisibleIgnore = 1
+    let s:InvisibleIgnore = 1
   elseif optionValue == 2
-    let g:Tabula_InvisibleIgnore = 0
+    let s:InvisibleIgnore = 0
   endif
+  call TabulaSettingInvisibleIgnore()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -830,10 +925,11 @@ function! Tabula_7()
 	\		      "2. not underlined"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_LNumUnderline = 1
+    let s:LNumUnderline = 1
   elseif optionValue == 2
-    let g:Tabula_LNumUnderline = 0
+    let s:LNumUnderline = 0
   endif
+  call TabulaSettingLNumUnderline()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -855,12 +951,13 @@ function! Tabula_8()
 	\		      "3. very prominent"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_SearchStandOut = 0
+    let s:SearchStandOut = 0
   elseif optionValue == 2
-    let g:Tabula_SearchStandOut = 1
+    let s:SearchStandOut = 1
   elseif optionValue == 3
-    let g:Tabula_SearchStandOut = 2
+    let s:SearchStandOut = 2
   endif
+  call TabulaSettingSearchStandOut()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -868,20 +965,31 @@ endfunction
 "------------------------------------------------------------------------------
 "
 function! Tabula_9()
-  let curOption = ""
+  let curOption = "underlined"
   if s:TodoUnderline == 0
-    let curOption = "not "
+    let curOption = "prominent"
+  elseif s:TodoUnderline == 2
+    let curOption = "bold"
+  elseif s:TodoUnderline == 3
+    let curOption = "not enhanced"
   endif
   let optionValue = inputlist([
-	\		      "How to display TODOs and similar (currently ".curOption."underlined)?",
+	\		      "How to display TODOs and similar (currently ".curOption.")?",
 	\		      "1. underlined",
-	\		      "2. not underlined"
+	\		      "2. prominent",
+	\		      "3. bold",
+  	\		      "4. not enhanced"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_TodoUnderline = 1
+    let s:TodoUnderline = 1
   elseif optionValue == 2
-    let g:Tabula_TodoUnderline = 0
+    let s:TodoUnderline = 0
+  elseif optionValue == 3
+    let s:TodoUnderline = 2
+  elseif optionValue == 4
+    let s:TodoUnderline = 3
   endif
+  call TabulaSettingTodoUnderline()
 endfunction
 
 "------------------------------------------------------------------------------
@@ -902,12 +1010,13 @@ function! Tabula_10()
   	\ 		      "3. not colored, terminal underline reversed"
   	\		      ])
   if optionValue == 1
-    let g:Tabula_CharValuesColored = 0
+    let s:CharValuesColored = 0
   elseif optionValue == 2
-    let g:Tabula_CharValuesColored = 1
+    let s:CharValuesColored = 1
   elseif optionValue == 3
-    let g:Tabula_CharValuesColored = 3
+    let s:CharValuesColored = 2
   endif
+  call TabulaSettingCharValuesColored()
 endfunction
 
 "==========================================================================}}}1

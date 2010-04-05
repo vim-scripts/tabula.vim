@@ -1,7 +1,7 @@
-*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2010-04-02
+*tabula.txt*	Tabula Colorscheme Options	      Last Change: 2010-04-05
 
 	       Option Settings for the Tabula Vim Colorscheme~
-				 Version 1.4.1~
+				 Version 1.4.2~
 								
 		    Copyright (c) 2006..2010 by Bernd Pol
 			    <bernd.pol@online.de>
@@ -32,9 +32,26 @@ line, e.g.: >
 
 To redefine them on the fly call the built-in options dialog: >
 	:call Tabula()
-then call
+The new settings will be immediately effective once the specific dialog option
+is closed (back in the Tabula() main menu).
+
+To get the defaults back call >
 	:colorscheme tabula
-in order to activate the new settings.
+again. (This has changed from earlier tabula versions where this call was
+necessary to make the settings changes effective.)
+
+NOTE The Tabula() dialog works well with the keyboard. Yet there may be issues
+     using the mouse because the selection is dependent on the proper
+     positions of the dialog lines. This means, option number 1 in a dialog
+     must be on the second line (the first line counts as zero), option number
+     2 on the third line, and so on.
+
+     Thus if you want to use mouseclicks in the Tabula() dialog make sure the
+     dialog lines do not wrap around because of a too narrow vim editor
+     window.
+
+If you want to see how the currently avalable colors look like, issue >
+	:so $VIMRUNTIME/syntax/hitest.vim
 
 -----------------------------------------------------------------------------
 HOW TO FORCE THE FULL XTERM COLOR RANGE			       *tabula-xterm*
@@ -93,10 +110,20 @@ Defaults to 'blue'.
 -----------------------------------------------------------------------------
 USE DARK BACKGROUND FOR ERROR DISPLAY			   *Tabula_DarkError*
 
-Sometimes desirable for less distracting error highlighting.
+Standard is a prominent error display featuring white characters on a red
+background. This is for example quite useful for programming tasks where
+errors are distributed throughout a long text.
+
+But there are situations where a fairly non-distracting error display will be
+in order. Think of actually typing a program where you want to concentrate on
+the code you type and just be mildly reminded something was not in order.
+
+In this case the other option may proof useful. It merely changes the
+background to black signalling there is an error but keeping the line easily
+readable as well.
 >
 	Tabula_DarkError = 0		light red error background
-	Tabula_DarkError = 1		dark red error background
+	Tabula_DarkError = 1		dark error background
 
 Defaults to light error background.
 -----------------------------------------------------------------------------
@@ -110,7 +137,7 @@ Defaults to using common colors.
 -----------------------------------------------------------------------------
 SHOW IGNORE AND NONTEXT CHARACTERS	     *Tabula_InvisibleIgnore*
 
-Set this to visible mode for Vim documentation editing.
+Set this to visible mode if you want to edit a Vim documentation file.
 >
 	Tabula_InvisibleIgnore = 0	slightly visible
 	Tabula_InvisibleIgnore = 1	invisible on standard background
@@ -139,10 +166,12 @@ Defaults to normal dark background display.
 -----------------------------------------------------------------------------
 HOW TO DISPLAY TODOS AND SIMILAR		       *Tabula_TodoUnderline*
 >
-      Tabula_TodoUnderline = 0	display on a blue background
-      Tabula_TodoUnderline = 1	display them underlined white
+      Tabula_TodoUnderline = 0		display on a blue background
+      Tabula_TodoUnderline = 1		display them underlined white
+      Tabula_TodoUnderline = 2		display them bold
+      Tabula_TodoUnderline = 3		do not enhance them at all
 
-Defaults to underlined display.
+Defaults to underlined white display.
 
 -----------------------------------------------------------------------------
 HOW TO DISPLAY TYPOGRAPHIC CHARACTER VALUES	   *Tabula_CharValuesColored*
@@ -153,11 +182,20 @@ HOW TO DISPLAY TYPOGRAPHIC CHARACTER VALUES	   *Tabula_CharValuesColored*
 
 Defaults to a colored typographics character values display.
 
-NOTE: Colored is to be preferred in terminal-based vim because there is no
-      easy way to distinguish italic from underline. Currently there are two
-      modes: enhance (reversed display) italics and enhance underline two
-      ease this situation a bit. These sub-modes do not affect the GUI
-      display, however.
+NOTE: "Colored" is to be preferred in terminal-based vim because there is no
+      easy way to distinguish italic from underline. In this mode italics and 
+      underlined characters are distinguished by differnt color shades, both 
+      displaying not reversed (usually black on a white background field) 
+      which is easier to read.
+
+      Otherwise there are two non-colored modes: >
+        italics are shown reversed, underlines are shown underlined 
+      or: >
+        italics are shown underlined, underlines are shown reversed.
+
+      These sub-modes do not affect the GUI display, however, where italics
+      and underlined always display as usual, only color coded or using the
+      common text color.
 
 -----------------------------------------------------------------------------
 
